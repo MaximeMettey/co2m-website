@@ -1,0 +1,46 @@
+{
+  "projects": [
+    {
+      "title": "Application E-commerce Mobile",
+      "description": "Application cross-platform Flutter pour une boutique en ligne avec paiement intégré et gestion de stock en temps réel.",
+      "icon": "🛒",
+      "image": "",
+      "tags": ["Flutter", "Firebase", "API REST", "iOS", "Android"]
+    },
+    {
+      "title": "Plateforme Web Symfony",
+      "description": "Plateforme de gestion métier complexe avec authentification multi-niveaux et tableau de bord analytique avancé.",
+      "icon": "⚙️",
+      "image": "",
+      "tags": ["Symfony", "PHP", "MySQL", "React", "Docker"]
+    },
+    {
+      "title": "Site E-commerce PrestaShop",
+      "description": "Boutique en ligne sur-mesure avec modules personnalisés, optimisation SEO et intégration de solutions de paiement multiples.",
+      "icon": "🏪",
+      "image": "",
+      "tags": ["PrestaShop", "PHP", "SEO", "Responsive", "Optimisation"]
+    },
+    {
+      "title": "Identité Visuelle Complète",
+      "description": "Création de logo, charte graphique et supports de communication print et digital pour une startup tech.",
+      "icon": "🎨",
+      "image": "",
+      "tags": ["Logo", "Branding", "Print", "Design", "Charte graphique"]
+    },
+    {
+      "title": "Application SaaS React",
+      "description": "Application web SaaS moderne avec architecture microservices, dashboard temps réel et système d'abonnements.",
+      "icon": "💼",
+      "image": "",
+      "tags": ["React", "Node.js", "MongoDB", "Stripe", "AWS"]
+    },
+    {
+      "title": "Site WordPress sur-mesure",
+      "description": "Site vitrine WordPress avec thème personnalisé, optimisations SEO/GEO et intégration d'outils marketing.",
+      "icon": "🌐",
+      "image": "",
+      "tags": ["WordPress", "Custom Theme", "SEO", "GEO", "Performance"]
+    }
+  ]
+}

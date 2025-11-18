@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CO2M - Maxime METTEY, expert développement web et mobile full-stack à Belfort. 14 ans d'expérience en création de sites, applications, graphisme et solutions sur-mesure.">
+    <meta name="keywords" content="développeur web Belfort, développeur full-stack, création site internet, application mobile, React, Symfony, WordPress, PrestaShop, Flutter, développeur freelance 90, agence web Franche-Comté">
+    <meta name="author" content="Maxime METTEY - CO2M">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://co2m.net/">
+    <meta property="og:title" content="CO2M - WebDesign et Communication | Développement Web & Mobile">
+    <meta property="og:description" content="Expert développement full-stack à Belfort. Des productions sur-mesure avec une haute expertise technique.">
+    <meta property="og:image" content="./logo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://co2m.net/">
+    <meta property="twitter:title" content="CO2M - WebDesign et Communication">
+    <meta property="twitter:description" content="Expert développement full-stack à Belfort. Des productions sur-mesure avec une haute expertise technique.">
+    <meta property="twitter:image" content="./logo.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./logo.png">
+
+    <title>CO2M - WebDesign et Communication | Développeur Full-Stack Belfort</title>
+
+    <style>
+        /* ============================================
+           VARIABLES & RESET
+           ============================================ */
+        :root {
+            --primary-color: #3FA9F5;
+            --primary-dark: #2B8DD6;
+            --primary-light: #6BC3FF;
+            --bg-dark: #0A0E27;
+            --bg-darker: #050812;
+            --bg-card: #151B3D;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B4BCD0;
+            --text-muted: #6B7394;
+            --accent-gradient: linear-gradient(135deg, #3FA9F5 0%, #2B8DD6 100%);
+            --shadow-glow: 0 0 40px rgba(63, 169, 245, 0.2);
+            --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.4);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           TYPOGRAPHY
+           ============================================ */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* ============================================
+           HEADER & NAVIGATION
+           ============================================ */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(63, 169, 245, 0.1);
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo img {
+            height: 50px;
+            transition: var(--transition);
+        }
+
+        header.scrolled .logo img {
+            height: 40px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .burger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--accent-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 20px rgba(63, 169, 245, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(63, 169, 245, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(63, 169, 245, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(43, 141, 214, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(63, 169, 245, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(63, 169, 245, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           SECTIONS
+           ============================================ */
+        section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+        }
+
+        /* Alternate background colors */
+        section:nth-child(even) {
+            background: var(--bg-darker);
+        }
+
+        /* ============================================
+           ABOUT SECTION
+           ============================================ */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        .about-highlight {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary-color);
+            margin-top: 2rem;
+        }
+
+        .about-image {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .about-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+            border: 1px solid rgba(63, 169, 245, 0.1);
+        }
+
+        .about-card:hover {
+            transform: translateX(10px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .about-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .about-card p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        /* ============================================
+           SERVICES SECTION
+           ============================================ */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+            border: 1px solid rgba(63, 169, 245, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-gradient);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .service-card h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .service-card ul {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .service-card li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .service-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* ============================================
+           PORTFOLIO SECTION
+           ============================================ */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+            border: 1px solid rgba(63, 169, 245, 0.1);
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--primary-color);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #1a2a4e 0%, #0d1628 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portfolio-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .portfolio-content {
+            padding: 2rem;
+        }
+
+        .portfolio-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .portfolio-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background: rgba(63, 169, 245, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(63, 169, 245, 0.2);
+        }
+
+        .portfolio-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* ============================================
+           STATS SECTION (Fun Metrics)
+           ============================================ */
+        .stats {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* ============================================
+           CONTACT SECTION
+           ============================================ */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info h3 {
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 10px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .contact-item:hover {
+            border-color: var(--primary-color);
+            transform: translateX(10px);
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            min-width: 40px;
+        }
+
+        .contact-details h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .contact-details p,
+        .contact-details a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .contact-details a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+            border: 2px solid rgba(63, 169, 245, 0.2);
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .contact-form {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-darker);
+            border: 2px solid rgba(63, 169, 245, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(63, 169, 245, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            background: var(--bg-darker);
+            padding: 3rem 2rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(63, 169, 245, 0.1);
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* ============================================
+           SCROLL TO TOP BUTTON
+           ============================================ */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow-glow);
+            z-index: 999;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+        }
+
+        .scroll-top::before {
+            content: '↑';
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 968px) {
+            .nav-links {
+                position: fixed;
+                right: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: rgba(10, 14, 39, 0.98);
+                width: 100%;
+                text-align: center;
+                transition: var(--transition);
+                padding: 2rem;
+                border-top: 1px solid rgba(63, 169, 245, 0.2);
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .burger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(8px, 8px);
+            }
+
+            .burger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .burger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -7px);
+            }
+
+            .about-content,
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            section {
+                padding: 4rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* ============================================
+           ANIMATIONS & EFFECTS
+           ============================================ */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading animation for portfolio */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         HEADER
+         ============================================ -->
+    <header id="header">
+        <nav>
+            <div class="logo">
+                <img src="./logo.png" alt="CO2M Logo">
+                <span class="logo-text">CO2M</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#apropos">À propos</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="hero" id="accueil">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <h1>Des productions sur-mesure<br>avec une haute expertise technique</h1>
+            <p class="hero-subtitle">CO2M - WebDesign et Communication</p>
+            <p>Développeur Full-Stack basé à Belfort avec 14 ans d'expérience. Je transforme vos idées en solutions digitales performantes et créatives.</p>
+            <div class="hero-cta">
+                <a href="#contact" class="btn">Demander un devis gratuit</a>
+                <a href="#portfolio" class="btn btn-outline">Voir mes réalisations</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         ABOUT SECTION
+         ============================================ -->
+    <section id="apropos">
+        <div class="container">
+            <div class="section-header">
+                <h2>À propos</h2>
+                <p>Passionné par le développement et le design, je crée des expériences digitales uniques</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Maxime METTEY</h3>
+                    <p>Bonjour ! Je suis développeur full-stack freelance basé à <strong>Belfort (90, Franche-Comté)</strong>, et j'accompagne mes clients depuis <strong>14 ans</strong> dans la réalisation de leurs projets digitaux.</p>
+                    <p>Mon approche ? Allier <strong>expertise technique pointue</strong> et <strong>créativité</strong> pour livrer des productions sur-mesure qui vous ressemblent vraiment. Pas de templates tout faits : chaque projet est une occasion de créer quelque chose d'unique.</p>
+                    <p>Du développement d'applications complexes au design graphique, en passant par l'optimisation SEO/GEO, je maîtrise toute la chaîne de production digitale. Que vous soyez une startup, une PME ou une agence en recherche de compétences en marque blanche, je m'adapte à vos besoins.</p>
+                    <div class="about-highlight">
+                        <strong>🎯 Ma philosophie :</strong> Donner une vraie identité humaine à vos projets, avec une dose d'humour et de proximité. Parce que la tech, c'est mieux quand c'est accessible !
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="about-card">
+                        <h4>📍 Localisation</h4>
+                        <p>Belfort, Franche-Comté<br>Interventions locales et nationales</p>
+                    </div>
+                    <div class="about-card">
+                        <h4>💼 Expérience</h4>
+                        <p>14 ans dans le développement<br>Full-stack web & mobile</p>
+                    </div>
+                    <div class="about-card">
+                        <h4>🚀 Polyvalence</h4>
+                        <p>Du code à la création graphique<br>Solutions complètes clés en main</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         SERVICES SECTION
+         ============================================ -->
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Services</h2>
+                <p>Des compétences variées pour répondre à tous vos besoins digitaux</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">🌐</div>
+                    <h3>Développement Web</h3>
+                    <p>Création de sites et applications web performantes et sur-mesure.</p>
+                    <ul>
+                        <li>Sites WordPress & PrestaShop</li>
+                        <li>Applications Symfony</li>
+                        <li>React, Angular, Vue.js</li>
+                        <li>PHP, HTML, CSS avancé</li>
+                        <li>Architecture full-stack</li>
+                    </ul>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">📱</div>
+                    <h3>Applications Mobile</h3>
+                    <p>Développement d'applications natives et cross-platform.</p>
+                    <ul>
+                        <li>Flutter (iOS & Android)</li>
+                        <li>Applications hybrides</li>
+                        <li>React Native</li>
+                        <li>Progressive Web Apps (PWA)</li>
+                        <li>Déploiement App Store & Play Store</li>
+                    </ul>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">🎨</div>
+                    <h3>Design & Graphisme</h3>
+                    <p>Création d'identités visuelles et supports de communication.</p>
+                    <ul>
+                        <li>Création de logos</li>
+                        <li>Charte graphique</li>
+                        <li>Design UI/UX</li>
+                        <li>Supports print</li>
+                        <li>Maquettes web & mobile</li>
+                    </ul>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">🔍</div>
+                    <h3>SEO & Référencement IA</h3>
+                    <p>Optimisation pour les moteurs de recherche classiques et IA.</p>
+                    <ul>
+                        <li>Optimisation SEO technique</li>
+                        <li>Référencement GEO (IA)</li>
+                        <li>Analyse de performance</li>
+                        <li>Stratégie de contenu</li>
+                        <li>Optimisation Core Web Vitals</li>
+                    </ul>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">🤝</div>
+                    <h3>Développement Marque Blanche</h3>
+                    <p>Partenaire technique pour les agences et professionnels.</p>
+                    <ul>
+                        <li>Développement sous votre marque</li>
+                        <li>Support technique agile</li>
+                        <li>Respect des deadlines</li>
+                        <li>Communication transparente</li>
+                        <li>Confidentialité garantie</li>
+                    </ul>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Solutions Spécifiques</h3>
+                    <p>Développement d'outils et applications métier sur-mesure.</p>
+                    <ul>
+                        <li>Applications métier personnalisées</li>
+                        <li>APIs & intégrations</li>
+                        <li>Automatisation de processus</li>
+                        <li>Outils de gestion internes</li>
+                        <li>Solutions SaaS</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         PORTFOLIO SECTION
+         ============================================ -->
+    <section id="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <h2>Portfolio</h2>
+                <p>Une sélection de mes réalisations récentes</p>
+            </div>
+            <div class="portfolio-grid" id="portfolioGrid">
+                <!-- Projects will be loaded from projects.json -->
+                <div class="portfolio-empty loading">
+                    Chargement des projets...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         STATS SECTION (Fun Metrics)
+         ============================================ -->
+    <section>
+        <div class="container">
+            <div class="stats">
+                <div class="section-header">
+                    <h2>Quelques chiffres</h2>
+                    <p>Parce que les stats, c'est plus sympa quand c'est un peu décalé</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item fade-in">
+                        <div class="stat-icon">☕</div>
+                        <span class="stat-number" data-target="4">0</span>
+                        <div class="stat-label">Expressos / jour<br>(en moyenne)</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-icon">👨‍💻</div>
+                        <span class="stat-number" data-target="14">0</span>
+                        <div class="stat-label">Années<br>d'expérience</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-icon">💻</div>
+                        <span class="stat-number" data-target="500000">0</span>
+                        <div class="stat-label">Lignes de code<br>(approximativement)</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-icon">🚀</div>
+                        <span class="stat-number" data-target="100">0</span>
+                        <div class="stat-label">Projets déployés<br>en production</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-icon">🎯</div>
+                        <span class="stat-number" data-target="99">0</span>
+                        <div class="stat-label">% de clients<br>satisfaits</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-icon">🌙</div>
+                        <span class="stat-number" data-target="1247">0</span>
+                        <div class="stat-label">Nuits de debug<br>(et de déploiements)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         CONTACT SECTION
+         ============================================ -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contact</h2>
+                <p>Un projet en tête ? Discutons-en !</p>
+            </div>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Restons en contact</h3>
+                    <p>N'hésitez pas à me contacter pour discuter de votre projet. Je vous propose un <strong>devis gratuit</strong> et sans engagement.</p>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-details">
+                            <h4>Email</h4>
+                            <a href="mailto:maxime@co2m.net">maxime@co2m.net</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-details">
+                            <h4>Téléphone</h4>
+                            <a href="tel:+33766273034">+33 (0)7.66.27.30.34</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-details">
+                            <h4>Localisation</h4>
+                            <p>Belfort (90), Franche-Comté<br>France</p>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--primary-color);">Retrouvez-moi sur</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="LinkedIn" aria-label="LinkedIn">
+                            <span>in</span>
+                        </a>
+                        <a href="#" class="social-link" title="GitHub" aria-label="GitHub">
+                            <span>⌘</span>
+                        </a>
+                        <a href="#" class="social-link" title="Twitter" aria-label="Twitter">
+                            <span>𝕏</span>
+                        </a>
+                        <a href="#" class="social-link" title="Instagram" aria-label="Instagram">
+                            <span>📷</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h3>Envoyez-moi un message</h3>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Nom *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Sujet</label>
+                            <input type="text" id="subject" name="subject">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Envoyer le message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#accueil">Accueil</a>
+                <a href="#apropos">À propos</a>
+                <a href="#services">Services</a>
+                <a href="#portfolio">Portfolio</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <p>&copy; 2024 CO2M - Maxime METTEY. Tous droits réservés.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">Développement web & mobile - Belfort, Franche-Comté</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <div class="scroll-top" id="scrollTop"></div>
+
+    <!-- ============================================
+         JAVASCRIPT
+         ============================================ -->
+    <script>
+        // ============================================
+        // Mobile Navigation Toggle
+        // ============================================
+        const burger = document.getElementById('burger');
+        const navLinks = document.getElementById('navLinks');
+
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            burger.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                burger.classList.remove('active');
+            });
+        });
+
+        // ============================================
+        // Header Scroll Effect
+        // ============================================
+        const header = document.getElementById('header');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // ============================================
+        // Scroll to Top Button
+        // ============================================
+        const scrollTop = document.getElementById('scrollTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // ============================================
+        // Fade-in Animation on Scroll
+        // ============================================
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // ============================================
+        // Counter Animation for Stats
+        // ============================================
+        const counters = document.querySelectorAll('.stat-number');
+        let countersActivated = false;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+                let current = 0;
+
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current).toLocaleString('fr-FR');
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target.toLocaleString('fr-FR');
+                    }
+                };
+
+                updateCounter();
+            });
+        };
+
+        // Trigger counter animation when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !countersActivated) {
+                    countersActivated = true;
+                    animateCounters();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // ============================================
+        // Load Portfolio from JSON
+        // ============================================
+        async function loadPortfolio() {
+            const portfolioGrid = document.getElementById('portfolioGrid');
+
+            try {
+                const response = await fetch('projects.json');
+                const data = await response.json();
+
+                portfolioGrid.innerHTML = '';
+
+                if (data.projects && data.projects.length > 0) {
+                    data.projects.forEach(project => {
+                        const card = document.createElement('div');
+                        card.className = 'portfolio-card fade-in';
+
+                        const imageContent = project.image
+                            ? `<img src="${project.image}" alt="${project.title}">`
+                            : `<span>${project.icon || '🚀'}</span>`;
+
+                        card.innerHTML = `
+                            <div class="portfolio-image">
+                                ${imageContent}
+                            </div>
+                            <div class="portfolio-content">
+                                <h3>${project.title}</h3>
+                                <p>${project.description}</p>
+                                <div class="portfolio-tags">
+                                    ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        `;
+
+                        portfolioGrid.appendChild(card);
+                        observer.observe(card);
+                    });
+                } else {
+                    portfolioGrid.innerHTML = '<div class="portfolio-empty">Aucun projet disponible pour le moment. N\'hésitez pas à me contacter pour découvrir mes réalisations !</div>';
+                }
+            } catch (error) {
+                console.error('Error loading portfolio:', error);
+                portfolioGrid.innerHTML = '<div class="portfolio-empty">Les projets seront bientôt disponibles. En attendant, contactez-moi pour découvrir mes réalisations !</div>';
+            }
+        }
+
+        // Load portfolio on page load
+        loadPortfolio();
+
+        // ============================================
+        // Contact Form Handling
+        // ============================================
+        const contactForm = document.getElementById('contactForm');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData);
+
+            // Here you would typically send the data to a server
+            // For now, we'll just show an alert
+            alert(`Merci pour votre message ! Je vous répondrai dans les plus brefs délais.\n\nNom: ${data.name}\nEmail: ${data.email}`);
+
+            // Reset form
+            contactForm.reset();
+
+            // In a real implementation, you would do something like:
+            // fetch('/api/contact', {
+            //     method: 'POST',
+            //     body: JSON.stringify(data),
+            //     headers: { 'Content-Type': 'application/json' }
+            // });
+        });
+
+        // ============================================
+        // Smooth Scrolling for Anchor Links
+        // ============================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerOffset = 80;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
