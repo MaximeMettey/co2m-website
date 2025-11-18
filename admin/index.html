@@ -225,6 +225,23 @@
                         </div>
                     </div>
 
+                    <div class="form-card">
+                        <h3>Sécurité</h3>
+                        <div class="form-group">
+                            <label>Mot de passe actuel</label>
+                            <input type="password" id="current_password" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Nouveau mot de passe</label>
+                            <input type="password" id="new_password" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmer le nouveau mot de passe</label>
+                            <input type="password" id="confirm_password" class="form-control">
+                        </div>
+                        <button class="btn btn-warning" onclick="changePassword()">🔒 Changer le mot de passe</button>
+                    </div>
+
                     <button class="btn btn-success btn-lg" onclick="saveSettings()">💾 Enregistrer les paramètres</button>
                 </div>
             </section>
@@ -237,22 +254,14 @@
 
                 <div class="db-actions">
                     <div class="form-card">
-                        <h3>💾 Export de la base de données</h3>
-                        <p>Téléchargez votre base de données SQLite pour backup ou migration.</p>
-                        <button class="btn btn-success" onclick="exportDatabase()">📥 Télécharger la BDD (.sqlite)</button>
-                    </div>
-
-                    <div class="form-card">
-                        <h3>📤 Import de la base de données</h3>
-                        <p>Importez un fichier SQLite pour restaurer vos données.</p>
-                        <input type="file" id="dbFileInput" accept=".sqlite,.db" style="display: none;">
-                        <button class="btn btn-primary" onclick="document.getElementById('dbFileInput').click()">📤 Importer une BDD</button>
-                    </div>
-
-                    <div class="form-card">
-                        <h3>🔄 Réinitialisation</h3>
-                        <p>⚠️ Attention : Cette action supprimera toutes vos données et recréera la base avec les données d'exemple.</p>
-                        <button class="btn btn-danger" onclick="resetDatabase()">🗑️ Réinitialiser la BDD</button>
+                        <h3>💾 Base de données serveur</h3>
+                        <p>La base de données SQLite est gérée côté serveur. Pour effectuer des opérations de maintenance :</p>
+                        <ul style="margin-top: 1rem; line-height: 1.8;">
+                            <li><strong>Backup :</strong> <code>cp server/database/co2m.db server/database/backup-$(date +%Y%m%d).db</code></li>
+                            <li><strong>Restauration :</strong> <code>cp server/database/backup-YYYYMMDD.db server/database/co2m.db</code></li>
+                            <li><strong>Réinitialisation :</strong> <code>npm run init-db</code></li>
+                        </ul>
+                        <p style="margin-top: 1rem;">Consultez <strong>DEPLOY.md</strong> pour plus d'informations.</p>
                     </div>
                 </div>
             </section>
@@ -471,8 +480,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
-    <script src="../js/database.js"></script>
+    <script src="../js/api.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

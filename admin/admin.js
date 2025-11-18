@@ -1,4 +1,4 @@
-// Initialize database and admin panel
+// CO2M Admin Panel - REST API Version
 let currentEditingServiceId = null;
 let currentEditingProjectId = null;
 let currentEditingStatId = null;
@@ -7,28 +7,71 @@ let currentEditingStatId = null;
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Initializing admin panel...');
 
-    // Initialize database
-    const initialized = await DB.init();
-    if (!initialized) {
-        alert('Erreur lors de l\'initialisation de la base de données !');
+    // Check authentication
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+        console.log('No token found, redirecting to login...');
+        window.location.href = '/admin/login.html';
+        return;
+    }
+
+    // Verify token is still valid
+    try {
+        const result = await API.verifyToken();
+        if (!result.valid) {
+            console.log('Token invalid, redirecting to login...');
+            window.location.href = '/admin/login.html';
+            return;
+        }
+    } catch (error) {
+        console.error('Token verification failed:', error);
+        window.location.href = '/admin/login.html';
         return;
     }
 
     // Load all data
-    loadDashboard();
-    loadServices();
-    loadProjects();
-    loadStats();
-    loadSettings();
+    try {
+        await loadDashboard();
+        await loadServices();
+        await loadProjects();
+        await loadStats();
+        await loadSettings();
 
-    // Setup navigation
-    setupNavigation();
+        // Setup navigation
+        setupNavigation();
 
-    // Setup database import
-    setupDatabaseImport();
+        // Setup logout button
+        setupLogout();
 
-    console.log('Admin panel initialized!');
+        console.log('Admin panel initialized!');
+    } catch (error) {
+        console.error('Error initializing admin panel:', error);
+        showError('Erreur lors du chargement des données');
+    }
 });
+
+// Setup logout functionality
+function setupLogout() {
+    // Add logout button if not exists
+    const sidebarFooter = document.querySelector('.sidebar-footer');
+    if (sidebarFooter && !document.getElementById('logoutBtn')) {
+        const logoutBtn = document.createElement('button');
+        logoutBtn.id = 'logoutBtn';
+        logoutBtn.className = 'btn btn-danger';
+        logoutBtn.textContent = '🚪 Déconnexion';
+        logoutBtn.style.width = '100%';
+        logoutBtn.style.marginTop = '1rem';
+        logoutBtn.onclick = logout;
+        sidebarFooter.appendChild(logoutBtn);
+    }
+}
+
+function logout() {
+    if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+        API.logout();
+        window.location.href = '/admin/login.html';
+    }
+}
 
 // Navigation
 function setupNavigation() {
@@ -75,52 +118,67 @@ function showSection(sectionName) {
     if (sectionName === 'settings') loadSettings();
 }
 
+// Error handling
+function showError(message) {
+    alert('Erreur : ' + message);
+}
+
 // ============================================
 // DASHBOARD
 // ============================================
-function loadDashboard() {
-    const services = DB.getAll('services');
-    const projects = DB.getAll('projects');
-    const stats = DB.getAll('stats');
+async function loadDashboard() {
+    try {
+        const [services, projects, stats] = await Promise.all([
+            API.getAllServices(),
+            API.getAllProjects(),
+            API.getAllStats()
+        ]);
 
-    document.getElementById('totalServices').textContent = services.length;
-    document.getElementById('totalProjects').textContent = projects.length;
-    document.getElementById('totalStats').textContent = stats.length;
+        document.getElementById('totalServices').textContent = services.length;
+        document.getElementById('totalProjects').textContent = projects.length;
+        document.getElementById('totalStats').textContent = stats.length;
 
-    // Calculate database size
-    const dbData = localStorage.getItem('co2m_database');
-    const sizeKB = dbData ? (dbData.length / 1024).toFixed(2) : 0;
-    document.getElementById('dbSize').textContent = `${sizeKB} KB`;
+        // Database size is server-side now, show N/A
+        document.getElementById('dbSize').textContent = 'N/A';
+    } catch (error) {
+        console.error('Error loading dashboard:', error);
+        showError('Erreur lors du chargement du dashboard');
+    }
 }
 
 // ============================================
 // SERVICES
 // ============================================
-function loadServices() {
-    const services = DB.getAll('services');
-    const tbody = document.getElementById('servicesTable');
+async function loadServices() {
+    try {
+        const services = await API.getAllServices();
+        const tbody = document.getElementById('servicesTable');
 
-    if (services.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="loading">Aucun service</td></tr>';
-        return;
+        if (services.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="loading">Aucun service</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = services.map(service => `
+            <tr>
+                <td style="font-size: 2rem">${service.icon || '🌐'}</td>
+                <td><strong>${service.title}</strong></td>
+                <td><code>${service.slug}</code></td>
+                <td>
+                    <span class="badge ${service.is_active ? 'badge-success' : 'badge-danger'}">
+                        ${service.is_active ? '✓ Actif' : '✗ Inactif'}
+                    </span>
+                </td>
+                <td class="action-btns">
+                    <button class="btn btn-sm btn-primary" onclick="editService(${service.id})">✏️ Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">🗑️</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading services:', error);
+        showError('Erreur lors du chargement des services');
     }
-
-    tbody.innerHTML = services.map(service => `
-        <tr>
-            <td style="font-size: 2rem">${service.icon || '🌐'}</td>
-            <td><strong>${service.title}</strong></td>
-            <td><code>${service.slug}</code></td>
-            <td>
-                <span class="badge ${service.is_active ? 'badge-success' : 'badge-danger'}">
-                    ${service.is_active ? '✓ Actif' : '✗ Inactif'}
-                </span>
-            </td>
-            <td class="action-btns">
-                <button class="btn btn-sm btn-primary" onclick="editService(${service.id})">✏️ Modifier</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">🗑️</button>
-            </td>
-        </tr>
-    `).join('');
 }
 
 function openServiceModal(id = null) {
@@ -129,22 +187,25 @@ function openServiceModal(id = null) {
     form.reset();
 
     if (id) {
-        const service = DB.getOne('services', 'id = ?', [id]);
-        if (service) {
-            document.getElementById('serviceModalTitle').textContent = 'Modifier le service';
-            document.getElementById('service_id').value = service.id;
-            document.getElementById('service_title').value = service.title;
-            document.getElementById('service_slug').value = service.slug;
-            document.getElementById('service_icon').value = service.icon || '';
-            document.getElementById('service_short_description').value = service.short_description || '';
-            document.getElementById('service_full_description').value = service.full_description || '';
+        // Load service data
+        API.getAllServices().then(services => {
+            const service = services.find(s => s.id === id);
+            if (service) {
+                document.getElementById('serviceModalTitle').textContent = 'Modifier le service';
+                document.getElementById('service_id').value = service.id;
+                document.getElementById('service_title').value = service.title;
+                document.getElementById('service_slug').value = service.slug;
+                document.getElementById('service_icon').value = service.icon || '';
+                document.getElementById('service_short_description').value = service.short_description || '';
+                document.getElementById('service_full_description').value = service.full_description || '';
 
-            const features = service.features ? JSON.parse(service.features) : [];
-            document.getElementById('service_features').value = features.join('\n');
+                const features = service.features ? JSON.parse(service.features) : [];
+                document.getElementById('service_features').value = features.join('\n');
 
-            document.getElementById('service_order_index').value = service.order_index || 0;
-            document.getElementById('service_is_active').checked = service.is_active == 1;
-        }
+                document.getElementById('service_order_index').value = service.order_index || 0;
+                document.getElementById('service_is_active').checked = service.is_active == 1;
+            }
+        });
     } else {
         document.getElementById('serviceModalTitle').textContent = 'Nouveau service';
         document.getElementById('service_id').value = '';
@@ -161,7 +222,7 @@ function editService(id) {
     openServiceModal(id);
 }
 
-function saveService(event) {
+async function saveService(event) {
     event.preventDefault();
 
     const id = document.getElementById('service_id').value;
@@ -182,61 +243,73 @@ function saveService(event) {
 
     try {
         if (id) {
-            DB.update('services', data, 'id = ?', [id]);
+            await API.updateService(id, data);
         } else {
-            DB.insert('services', data);
+            await API.createService(data);
         }
 
         closeServiceModal();
-        loadServices();
-        loadDashboard();
+        await loadServices();
+        await loadDashboard();
         alert('Service enregistré !');
     } catch (error) {
-        alert('Erreur : ' + error.message);
+        console.error('Error saving service:', error);
+        showError(error.message || 'Erreur lors de l\'enregistrement du service');
     }
 }
 
-function deleteService(id) {
+async function deleteService(id) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) return;
 
-    DB.delete('services', 'id = ?', [id]);
-    loadServices();
-    loadDashboard();
+    try {
+        await API.deleteService(id);
+        await loadServices();
+        await loadDashboard();
+        alert('Service supprimé !');
+    } catch (error) {
+        console.error('Error deleting service:', error);
+        showError(error.message || 'Erreur lors de la suppression du service');
+    }
 }
 
 // ============================================
 // PROJECTS
 // ============================================
-function loadProjects() {
-    const projects = DB.getAll('projects');
-    const tbody = document.getElementById('projectsTable');
+async function loadProjects() {
+    try {
+        const projects = await API.getAllProjects();
+        const tbody = document.getElementById('projectsTable');
 
-    if (projects.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Aucun projet</td></tr>';
-        return;
+        if (projects.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Aucun projet</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = projects.map(project => `
+            <tr>
+                <td style="font-size: 2rem">${project.icon || '🚀'}</td>
+                <td><strong>${project.title}</strong></td>
+                <td><code>${project.slug}</code></td>
+                <td>
+                    <span class="badge ${project.is_featured ? 'badge-success' : 'badge-danger'}">
+                        ${project.is_featured ? '⭐ Oui' : '✗ Non'}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge ${project.is_active ? 'badge-success' : 'badge-danger'}">
+                        ${project.is_active ? '✓ Actif' : '✗ Inactif'}
+                    </span>
+                </td>
+                <td class="action-btns">
+                    <button class="btn btn-sm btn-primary" onclick="editProject(${project.id})">✏️ Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteProject(${project.id})">🗑️</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading projects:', error);
+        showError('Erreur lors du chargement des projets');
     }
-
-    tbody.innerHTML = projects.map(project => `
-        <tr>
-            <td style="font-size: 2rem">${project.icon || '🚀'}</td>
-            <td><strong>${project.title}</strong></td>
-            <td><code>${project.slug}</code></td>
-            <td>
-                <span class="badge ${project.is_featured ? 'badge-success' : 'badge-danger'}">
-                    ${project.is_featured ? '⭐ Oui' : '✗ Non'}
-                </span>
-            </td>
-            <td>
-                <span class="badge ${project.is_active ? 'badge-success' : 'badge-danger'}">
-                    ${project.is_active ? '✓ Actif' : '✗ Inactif'}
-                </span>
-            </td>
-            <td class="action-btns">
-                <button class="btn btn-sm btn-primary" onclick="editProject(${project.id})">✏️ Modifier</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteProject(${project.id})">🗑️</button>
-            </td>
-        </tr>
-    `).join('');
 }
 
 function openProjectModal(id = null) {
@@ -245,29 +318,31 @@ function openProjectModal(id = null) {
     form.reset();
 
     if (id) {
-        const project = DB.getOne('projects', 'id = ?', [id]);
-        if (project) {
-            document.getElementById('projectModalTitle').textContent = 'Modifier le projet';
-            document.getElementById('project_id').value = project.id;
-            document.getElementById('project_title').value = project.title;
-            document.getElementById('project_slug').value = project.slug;
-            document.getElementById('project_icon').value = project.icon || '';
-            document.getElementById('project_image').value = project.image || '';
-            document.getElementById('project_short_description').value = project.short_description || '';
-            document.getElementById('project_full_description').value = project.full_description || '';
+        API.getAllProjects().then(projects => {
+            const project = projects.find(p => p.id === id);
+            if (project) {
+                document.getElementById('projectModalTitle').textContent = 'Modifier le projet';
+                document.getElementById('project_id').value = project.id;
+                document.getElementById('project_title').value = project.title;
+                document.getElementById('project_slug').value = project.slug;
+                document.getElementById('project_icon').value = project.icon || '';
+                document.getElementById('project_image').value = project.image || '';
+                document.getElementById('project_short_description').value = project.short_description || '';
+                document.getElementById('project_full_description').value = project.full_description || '';
 
-            const tags = project.tags ? JSON.parse(project.tags) : [];
-            document.getElementById('project_tags').value = tags.join(', ');
+                const tags = project.tags ? JSON.parse(project.tags) : [];
+                document.getElementById('project_tags').value = tags.join(', ');
 
-            const technologies = project.technologies ? JSON.parse(project.technologies) : [];
-            document.getElementById('project_technologies').value = technologies.join(', ');
+                const technologies = project.technologies ? JSON.parse(project.technologies) : [];
+                document.getElementById('project_technologies').value = technologies.join(', ');
 
-            document.getElementById('project_project_url').value = project.project_url || '';
-            document.getElementById('project_github_url').value = project.github_url || '';
-            document.getElementById('project_order_index').value = project.order_index || 0;
-            document.getElementById('project_is_featured').checked = project.is_featured == 1;
-            document.getElementById('project_is_active').checked = project.is_active == 1;
-        }
+                document.getElementById('project_project_url').value = project.project_url || '';
+                document.getElementById('project_github_url').value = project.github_url || '';
+                document.getElementById('project_order_index').value = project.order_index || 0;
+                document.getElementById('project_is_featured').checked = project.is_featured == 1;
+                document.getElementById('project_is_active').checked = project.is_active == 1;
+            }
+        });
     } else {
         document.getElementById('projectModalTitle').textContent = 'Nouveau projet';
         document.getElementById('project_id').value = '';
@@ -284,7 +359,7 @@ function editProject(id) {
     openProjectModal(id);
 }
 
-function saveProject(event) {
+async function saveProject(event) {
     event.preventDefault();
 
     const id = document.getElementById('project_id').value;
@@ -316,56 +391,68 @@ function saveProject(event) {
 
     try {
         if (id) {
-            DB.update('projects', data, 'id = ?', [id]);
+            await API.updateProject(id, data);
         } else {
-            DB.insert('projects', data);
+            await API.createProject(data);
         }
 
         closeProjectModal();
-        loadProjects();
-        loadDashboard();
+        await loadProjects();
+        await loadDashboard();
         alert('Projet enregistré !');
     } catch (error) {
-        alert('Erreur : ' + error.message);
+        console.error('Error saving project:', error);
+        showError(error.message || 'Erreur lors de l\'enregistrement du projet');
     }
 }
 
-function deleteProject(id) {
+async function deleteProject(id) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) return;
 
-    DB.delete('projects', 'id = ?', [id]);
-    loadProjects();
-    loadDashboard();
+    try {
+        await API.deleteProject(id);
+        await loadProjects();
+        await loadDashboard();
+        alert('Projet supprimé !');
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        showError(error.message || 'Erreur lors de la suppression du projet');
+    }
 }
 
 // ============================================
 // STATS
 // ============================================
-function loadStats() {
-    const stats = DB.getAll('stats');
-    const tbody = document.getElementById('statsTable');
+async function loadStats() {
+    try {
+        const stats = await API.getAllStats();
+        const tbody = document.getElementById('statsTable');
 
-    if (stats.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="loading">Aucune statistique</td></tr>';
-        return;
+        if (stats.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="loading">Aucune statistique</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = stats.map(stat => `
+            <tr>
+                <td style="font-size: 2rem">${stat.icon || '📊'}</td>
+                <td><strong>${stat.value}${stat.unit || ''}</strong></td>
+                <td>${stat.label}</td>
+                <td>
+                    <span class="badge ${stat.is_active ? 'badge-success' : 'badge-danger'}">
+                        ${stat.is_active ? '✓ Actif' : '✗ Inactif'}
+                    </span>
+                </td>
+                <td class="action-btns">
+                    <button class="btn btn-sm btn-primary" onclick="editStat(${stat.id})">✏️ Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteStat(${stat.id})">🗑️</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading stats:', error);
+        showError('Erreur lors du chargement des statistiques');
     }
-
-    tbody.innerHTML = stats.map(stat => `
-        <tr>
-            <td style="font-size: 2rem">${stat.icon || '📊'}</td>
-            <td><strong>${stat.value}${stat.unit || ''}</strong></td>
-            <td>${stat.label}</td>
-            <td>
-                <span class="badge ${stat.is_active ? 'badge-success' : 'badge-danger'}">
-                    ${stat.is_active ? '✓ Actif' : '✗ Inactif'}
-                </span>
-            </td>
-            <td class="action-btns">
-                <button class="btn btn-sm btn-primary" onclick="editStat(${stat.id})">✏️ Modifier</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteStat(${stat.id})">🗑️</button>
-            </td>
-        </tr>
-    `).join('');
 }
 
 function openStatModal(id = null) {
@@ -374,17 +461,19 @@ function openStatModal(id = null) {
     form.reset();
 
     if (id) {
-        const stat = DB.getOne('stats', 'id = ?', [id]);
-        if (stat) {
-            document.getElementById('statModalTitle').textContent = 'Modifier la statistique';
-            document.getElementById('stat_id').value = stat.id;
-            document.getElementById('stat_icon').value = stat.icon || '';
-            document.getElementById('stat_value').value = stat.value;
-            document.getElementById('stat_label').value = stat.label;
-            document.getElementById('stat_unit').value = stat.unit || '';
-            document.getElementById('stat_order_index').value = stat.order_index || 0;
-            document.getElementById('stat_is_active').checked = stat.is_active == 1;
-        }
+        API.getAllStats().then(stats => {
+            const stat = stats.find(s => s.id === id);
+            if (stat) {
+                document.getElementById('statModalTitle').textContent = 'Modifier la statistique';
+                document.getElementById('stat_id').value = stat.id;
+                document.getElementById('stat_icon').value = stat.icon || '';
+                document.getElementById('stat_value').value = stat.value;
+                document.getElementById('stat_label').value = stat.label;
+                document.getElementById('stat_unit').value = stat.unit || '';
+                document.getElementById('stat_order_index').value = stat.order_index || 0;
+                document.getElementById('stat_is_active').checked = stat.is_active == 1;
+            }
+        });
     } else {
         document.getElementById('statModalTitle').textContent = 'Nouvelle statistique';
         document.getElementById('stat_id').value = '';
@@ -401,7 +490,7 @@ function editStat(id) {
     openStatModal(id);
 }
 
-function saveStat(event) {
+async function saveStat(event) {
     event.preventDefault();
 
     const id = document.getElementById('stat_id').value;
@@ -416,48 +505,67 @@ function saveStat(event) {
 
     try {
         if (id) {
-            DB.update('stats', data, 'id = ?', [id]);
+            await API.updateStat(id, data);
         } else {
-            DB.insert('stats', data);
+            await API.createStat(data);
         }
 
         closeStatModal();
-        loadStats();
-        loadDashboard();
+        await loadStats();
+        await loadDashboard();
         alert('Statistique enregistrée !');
     } catch (error) {
-        alert('Erreur : ' + error.message);
+        console.error('Error saving stat:', error);
+        showError(error.message || 'Erreur lors de l\'enregistrement de la statistique');
     }
 }
 
-function deleteStat(id) {
+async function deleteStat(id) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer cette statistique ?')) return;
 
-    DB.delete('stats', 'id = ?', [id]);
-    loadStats();
-    loadDashboard();
+    try {
+        await API.deleteStat(id);
+        await loadStats();
+        await loadDashboard();
+        alert('Statistique supprimée !');
+    } catch (error) {
+        console.error('Error deleting stat:', error);
+        showError(error.message || 'Erreur lors de la suppression de la statistique');
+    }
 }
 
 // ============================================
 // SETTINGS
 // ============================================
-function loadSettings() {
-    const settingKeys = [
-        'site_title', 'site_tagline', 'contact_email', 'contact_phone',
-        'contact_location', 'social_linkedin', 'social_github',
-        'social_twitter', 'social_instagram'
-    ];
+async function loadSettings() {
+    try {
+        const settings = await API.getSettings();
 
-    settingKeys.forEach(key => {
-        const value = DB.getSetting(key);
-        const input = document.getElementById(`setting_${key}`);
-        if (input && value) {
-            input.value = value;
-        }
-    });
+        // Convert array to object for easier access
+        const settingsObj = {};
+        settings.forEach(setting => {
+            settingsObj[setting.key] = setting.value;
+        });
+
+        const settingKeys = [
+            'site_title', 'site_tagline', 'contact_email', 'contact_phone',
+            'contact_location', 'social_linkedin', 'social_github',
+            'social_twitter', 'social_instagram'
+        ];
+
+        settingKeys.forEach(key => {
+            const input = document.getElementById(`setting_${key}`);
+            if (input && settingsObj[key]) {
+                input.value = settingsObj[key];
+            }
+        });
+    } catch (error) {
+        console.error('Error loading settings:', error);
+        showError('Erreur lors du chargement des paramètres');
+    }
 }
 
-function saveSettings() {
+async function saveSettings() {
     const settingKeys = [
         'site_title', 'site_tagline', 'contact_email', 'contact_phone',
         'contact_location', 'social_linkedin', 'social_github',
@@ -465,16 +573,55 @@ function saveSettings() {
     ];
 
     try {
+        const updates = {};
         settingKeys.forEach(key => {
             const input = document.getElementById(`setting_${key}`);
             if (input) {
-                DB.updateSetting(key, input.value);
+                updates[key] = input.value;
             }
         });
 
+        await API.updateSettings(updates);
         alert('Paramètres enregistrés !');
     } catch (error) {
-        alert('Erreur : ' + error.message);
+        console.error('Error saving settings:', error);
+        showError(error.message || 'Erreur lors de l\'enregistrement des paramètres');
+    }
+}
+
+async function changePassword() {
+    const currentPassword = document.getElementById('current_password').value;
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        alert('Veuillez remplir tous les champs');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        alert('Les nouveaux mots de passe ne correspondent pas');
+        return;
+    }
+
+    if (newPassword.length < 8) {
+        alert('Le nouveau mot de passe doit contenir au moins 8 caractères');
+        return;
+    }
+
+    try {
+        await API.changePassword(currentPassword, newPassword);
+
+        // Clear fields
+        document.getElementById('current_password').value = '';
+        document.getElementById('new_password').value = '';
+        document.getElementById('confirm_password').value = '';
+
+        alert('Mot de passe changé avec succès !');
+    } catch (error) {
+        console.error('Error changing password:', error);
+        showError(error.message || 'Erreur lors du changement de mot de passe');
     }
 }
 
@@ -482,51 +629,17 @@ function saveSettings() {
 // DATABASE MANAGEMENT
 // ============================================
 function exportDatabase() {
-    DB.exportToFile();
-    alert('Base de données exportée !');
+    alert('L\'export de la base de données n\'est pas disponible pour une base serveur.\nVeuillez utiliser les commandes serveur pour faire un backup (voir DEPLOY.md).');
 }
 
 function setupDatabaseImport() {
+    // Not applicable for server-side database
     const fileInput = document.getElementById('dbFileInput');
-
-    fileInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        if (!confirm('Attention : Cette action va remplacer toute votre base de données actuelle. Continuer ?')) {
-            fileInput.value = '';
-            return;
-        }
-
-        try {
-            await DB.importFromFile(file);
-            alert('Base de données importée avec succès ! La page va se recharger.');
-            location.reload();
-        } catch (error) {
-            alert('Erreur lors de l\'import : ' + error.message);
-        }
-
-        fileInput.value = '';
-    });
+    if (fileInput) {
+        fileInput.style.display = 'none';
+    }
 }
 
 function resetDatabase() {
-    if (!confirm('⚠️ ATTENTION : Cette action va supprimer toutes vos données et recréer la base avec les données d\'exemple. Cette action est IRRÉVERSIBLE. Continuer ?')) {
-        return;
-    }
-
-    if (!confirm('Êtes-vous VRAIMENT sûr ? Toutes vos données seront perdues !')) {
-        return;
-    }
-
-    try {
-        // Clear localStorage
-        localStorage.removeItem('co2m_database');
-
-        // Reload page to reinitialize
-        alert('Base de données réinitialisée ! La page va se recharger.');
-        location.reload();
-    } catch (error) {
-        alert('Erreur lors de la réinitialisation : ' + error.message);
-    }
+    alert('La réinitialisation de la base de données doit être effectuée côté serveur.\nVeuillez exécuter: npm run init-db');
 }

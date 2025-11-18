@@ -8,6 +8,13 @@ const verifyHCaptcha = async (req, res, next) => {
             return res.status(400).json({ error: 'hCaptcha token required' });
         }
 
+        // In development mode with test keys, skip actual verification
+        if (process.env.NODE_ENV === 'development' &&
+            process.env.HCAPTCHA_SECRET === '0x0000000000000000000000000000000000000000') {
+            console.log('⚠️  Development mode: Skipping hCaptcha verification');
+            return next();
+        }
+
         // Verify the token with hCaptcha API
         const response = await axios.post(
             'https://hcaptcha.com/siteverify',
