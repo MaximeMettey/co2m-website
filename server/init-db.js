@@ -56,6 +56,7 @@ db.exec(`
         technologies TEXT,
         project_url TEXT,
         github_url TEXT,
+        gallery TEXT DEFAULT '[]',
         order_index INTEGER DEFAULT 0,
         is_featured BOOLEAN DEFAULT 0,
         is_active BOOLEAN DEFAULT 1,
@@ -389,8 +390,8 @@ const projects = [
 ];
 
 const insertProject = db.prepare(`
-    INSERT INTO projects (title, slug, icon, image, short_description, full_description, tags, technologies, order_index, is_featured)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO projects (title, slug, icon, image, short_description, full_description, tags, technologies, gallery, order_index, is_featured)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
 projects.forEach(project => {
@@ -403,6 +404,7 @@ projects.forEach(project => {
         project.full_description,
         project.tags,
         project.technologies,
+        '[]', // gallery - empty by default
         project.order_index,
         project.is_featured
     );
