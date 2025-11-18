@@ -464,6 +464,9 @@ function openProjectModal(id = null) {
                 // Show image preview if exists
                 showProjectImagePreview(project.image);
 
+                // Load gallery
+                loadProjectGallery(project.gallery);
+
                 // Set Quill editor content
                 if (projectDescriptionEditor) {
                     const delta = projectDescriptionEditor.clipboard.convert(project.full_description || '');
@@ -486,6 +489,7 @@ function openProjectModal(id = null) {
     } else {
         document.getElementById('projectModalTitle').textContent = 'Nouveau projet';
         document.getElementById('project_id').value = '';
+        resetGallery();
     }
 
     modal.classList.add('active');
@@ -524,6 +528,7 @@ async function saveProject(event) {
         ),
         project_url: document.getElementById('project_project_url').value,
         github_url: document.getElementById('project_github_url').value,
+        gallery: document.getElementById('project_gallery').value || '[]',
         order_index: parseInt(document.getElementById('project_order_index').value),
         is_featured: document.getElementById('project_is_featured').checked ? 1 : 0,
         is_active: document.getElementById('project_is_active').checked ? 1 : 0
@@ -881,4 +886,136 @@ function showProjectImagePreview(imageUrl) {
     } else {
         document.getElementById('project_image_preview').style.display = 'none';
     }
+}
+
+// ============================================
+// GALLERY UPLOAD FOR PROJECTS
+// ============================================
+
+// Track current gallery images
+let currentGallery = [];
+
+// Handle gallery file selection and upload
+document.addEventListener('DOMContentLoaded', () => {
+    const galleryInput = document.getElementById('project_gallery_files');
+    if (galleryInput) {
+        galleryInput.addEventListener('change', handleGalleryUpload);
+    }
+});
+
+async function handleGalleryUpload(event) {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+
+    // Validate each file
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    for (const file of files) {
+        if (!allowedTypes.includes(file.type)) {
+            alert(`Type de fichier non supporté pour ${file.name}. Utilisez JPG, PNG, GIF ou WebP.`);
+            event.target.value = '';
+            return;
+        }
+        if (file.size > maxSize) {
+            alert(`Le fichier ${file.name} est trop volumineux. Taille maximale : 5MB`);
+            event.target.value = '';
+            return;
+        }
+    }
+
+    try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            alert('Non authentifié');
+            return;
+        }
+
+        // Upload all files
+        const formData = new FormData();
+        files.forEach(file => formData.append('images', file));
+
+        const response = await fetch('/api/upload/gallery-images', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('Erreur lors de l\'upload');
+        }
+
+        const result = await response.json();
+
+        // Add new images to current gallery
+        result.images.forEach(img => {
+            currentGallery.push(img.url);
+        });
+
+        // Update hidden input and display
+        updateGalleryDisplay();
+
+        console.log(`✅ ${result.images.length} image(s) added to gallery`);
+
+        // Clear file input
+        event.target.value = '';
+
+    } catch (error) {
+        console.error('Gallery upload error:', error);
+        alert('Erreur lors de l\'upload : ' + error.message);
+        event.target.value = '';
+    }
+}
+
+function updateGalleryDisplay() {
+    const previewContainer = document.getElementById('project_gallery_preview');
+    const hiddenInput = document.getElementById('project_gallery');
+
+    // Update hidden input with JSON array
+    hiddenInput.value = JSON.stringify(currentGallery);
+
+    // Clear and rebuild preview
+    previewContainer.innerHTML = '';
+
+    if (currentGallery.length === 0) {
+        return; // CSS will show "Aucune image" message
+    }
+
+    currentGallery.forEach((imageUrl, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-preview-item';
+        item.innerHTML = `
+            <img src="${imageUrl}" alt="Gallery ${index + 1}">
+            <button type="button" class="remove-btn" onclick="removeGalleryImage(${index})" title="Supprimer">×</button>
+        `;
+        previewContainer.appendChild(item);
+    });
+}
+
+function removeGalleryImage(index) {
+    if (!confirm('Supprimer cette image de la galerie ?')) return;
+
+    currentGallery.splice(index, 1);
+    updateGalleryDisplay();
+}
+
+// Load existing gallery when editing
+function loadProjectGallery(galleryJson) {
+    try {
+        currentGallery = galleryJson ? JSON.parse(galleryJson) : [];
+        updateGalleryDisplay();
+    } catch (error) {
+        console.error('Error loading gallery:', error);
+        currentGallery = [];
+        updateGalleryDisplay();
+    }
+}
+
+// Reset gallery when creating new project
+function resetGallery() {
+    currentGallery = [];
+    updateGalleryDisplay();
+    document.getElementById('project_gallery_files').value = '';
 }

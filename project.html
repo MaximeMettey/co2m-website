@@ -236,6 +236,110 @@
             color: #ef4444;
         }
 
+        /* Gallery Carousel */
+        .project-gallery-section {
+            margin-bottom: 4rem;
+        }
+
+        .project-gallery-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .gallery-carousel {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .carousel-container {
+            overflow: hidden;
+            border-radius: 15px;
+            border: 1px solid rgba(63, 169, 245, 0.2);
+            background: var(--bg-card);
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: auto;
+            max-height: 600px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(63, 169, 245, 0.8);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-prev {
+            left: 10px;
+        }
+
+        .carousel-next {
+            right: 10px;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(63, 169, 245, 0.3);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .carousel-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.3);
+        }
+
+        .carousel-dot:hover {
+            background: rgba(63, 169, 245, 0.6);
+        }
+
         @media (max-width: 968px) {
             .project-content {
                 grid-template-columns: 1fr;
@@ -259,6 +363,24 @@
 
             .btn-group .btn {
                 width: 100%;
+            }
+
+            .carousel-item img {
+                max-height: 400px;
+            }
+
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .carousel-prev {
+                left: 5px;
+            }
+
+            .carousel-next {
+                right: 5px;
             }
         }
     </style>
@@ -343,6 +465,23 @@
                                 <!-- Technologies will be loaded here -->
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Carousel (only shown if gallery has images) -->
+                <div id="projectGallerySection" class="project-gallery-section fade-in" style="display: none;">
+                    <h2>Galerie d'images</h2>
+                    <div class="gallery-carousel">
+                        <button class="carousel-btn carousel-prev" onclick="moveCarousel(-1)">❮</button>
+                        <div class="carousel-container">
+                            <div class="carousel-track" id="galleryCarousel">
+                                <!-- Gallery images will be loaded here -->
+                            </div>
+                        </div>
+                        <button class="carousel-btn carousel-next" onclick="moveCarousel(1)">❯</button>
+                    </div>
+                    <div class="carousel-dots" id="carouselDots">
+                        <!-- Dots will be generated here -->
                     </div>
                 </div>
 

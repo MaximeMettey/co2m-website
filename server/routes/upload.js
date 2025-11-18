@@ -93,6 +93,31 @@ router.post('/content-image', authMiddleware, upload.single('image'), (req, res)
     }
 });
 
+// Upload multiple gallery images (protected - admin only)
+router.post('/gallery-images', authMiddleware, upload.array('images', 10), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'Aucun fichier uploadé' });
+        }
+
+        // Return array of public URL paths
+        const imageUrls = req.files.map(file => ({
+            url: `/uploads/projects/${file.filename}`,
+            filename: file.filename
+        }));
+
+        res.json({
+            success: true,
+            images: imageUrls
+        });
+
+        console.log(`✅ ${req.files.length} gallery image(s) uploaded`);
+    } catch (error) {
+        console.error('Gallery upload error:', error);
+        res.status(500).json({ error: 'Erreur lors de l\'upload' });
+    }
+});
+
 // Delete image endpoint (protected - admin only)
 router.delete('/project-image', authMiddleware, (req, res) => {
     try {

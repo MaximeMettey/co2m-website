@@ -70,7 +70,7 @@ router.get('/:slug', (req, res) => {
 // CREATE, UPDATE, DELETE routes (admin only) - similar to services
 router.post('/', authMiddleware, adminLimiter, (req, res) => {
     try {
-        const { title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, order_index, is_featured, is_active } = req.body;
+        const { title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, gallery, order_index, is_featured, is_active } = req.body;
 
         if (!title || !slug) {
             return res.status(400).json({ error: 'Title and slug are required' });
@@ -79,9 +79,9 @@ router.post('/', authMiddleware, adminLimiter, (req, res) => {
         const db = new Database(dbPath);
 
         const result = db.prepare(`
-            INSERT INTO projects (title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, order_index, is_featured, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).run(title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, order_index || 0, is_featured ? 1 : 0, is_active ? 1 : 0);
+            INSERT INTO projects (title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, gallery, order_index, is_featured, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, gallery || '[]', order_index || 0, is_featured ? 1 : 0, is_active ? 1 : 0);
 
         const newProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid);
 
@@ -96,23 +96,23 @@ router.post('/', authMiddleware, adminLimiter, (req, res) => {
 
 router.put('/:id', authMiddleware, adminLimiter, (req, res) => {
     try {
-        const { title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, order_index, is_featured, is_active } = req.body;
+        const { title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, gallery, order_index, is_featured, is_active } = req.body;
 
         const db = new Database(dbPath);
 
         const result = db.prepare(`
             UPDATE projects
             SET title = ?, slug = ?, icon = ?, image = ?, short_description = ?, full_description = ?,
-                tags = ?, technologies = ?, project_url = ?, github_url = ?, order_index = ?, is_featured = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
+                tags = ?, technologies = ?, project_url = ?, github_url = ?, gallery = ?, order_index = ?, is_featured = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
-        `).run(title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, order_index, is_featured ? 1 : 0, is_active ? 1 : 0, req.params.id);
+        `).run(title, slug, icon, image, short_description, full_description, tags, technologies, project_url, github_url, gallery || '[]', order_index, is_featured ? 1 : 0, is_active ? 1 : 0, req.params.id);
 
         if (result.changes === 0) {
             db.close();
             return res.status(404).json({ error: 'Project not found' });
         }
 
-        const updatedProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+        const updatedProject = db.prepare('Select * FROM projects WHERE id = ?').get(req.params.id);
 
         db.close();
 

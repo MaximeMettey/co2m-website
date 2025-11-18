@@ -99,6 +99,12 @@ async function loadProjectDetail(slug) {
             linksContainer.style.display = 'none';
         }
 
+        // Gallery carousel
+        const gallery = project.gallery ? JSON.parse(project.gallery) : [];
+        if (gallery.length > 0) {
+            initGalleryCarousel(gallery);
+        }
+
         // Observe new elements for fade-in animation
         document.querySelectorAll('.fade-in').forEach(el => {
             if (window.observer) {
@@ -121,4 +127,73 @@ function showError() {
     loadingState.style.display = 'none';
     errorState.style.display = 'block';
     projectContent.style.display = 'none';
+}
+
+// ============================================
+// GALLERY CAROUSEL
+// ============================================
+
+let currentSlide = 0;
+let galleryImages = [];
+
+function initGalleryCarousel(images) {
+    galleryImages = images;
+    currentSlide = 0;
+
+    const gallerySection = document.getElementById('projectGallerySection');
+    const carouselTrack = document.getElementById('galleryCarousel');
+    const dotsContainer = document.getElementById('carouselDots');
+
+    // Show gallery section
+    gallerySection.style.display = 'block';
+
+    // Build carousel items
+    carouselTrack.innerHTML = images.map((imageUrl, index) => `
+        <div class="carousel-item">
+            <img src="${imageUrl}" alt="Gallery image ${index + 1}">
+        </div>
+    `).join('');
+
+    // Build dots
+    dotsContainer.innerHTML = images.map((_, index) => `
+        <button class="carousel-dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></button>
+    `).join('');
+
+    console.log(`✅ Gallery carousel initialized with ${images.length} images`);
+}
+
+function moveCarousel(direction) {
+    currentSlide += direction;
+
+    // Loop around
+    if (currentSlide < 0) {
+        currentSlide = galleryImages.length - 1;
+    } else if (currentSlide >= galleryImages.length) {
+        currentSlide = 0;
+    }
+
+    updateCarousel();
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    updateCarousel();
+}
+
+function updateCarousel() {
+    const carouselTrack = document.getElementById('galleryCarousel');
+    const dots = document.querySelectorAll('.carousel-dot');
+
+    // Move carousel
+    const offset = -currentSlide * 100;
+    carouselTrack.style.transform = `translateX(${offset}%)`;
+
+    // Update dots
+    dots.forEach((dot, index) => {
+        if (index === currentSlide) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+    });
 }
