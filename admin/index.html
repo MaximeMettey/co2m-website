@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO2M - Administration</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../logo.png" alt="CO2M">
+                <h1>CO2M Admin</h1>
+            </div>
+            <nav class="admin-nav">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#services" class="nav-item" data-section="services">
+                    <span class="icon">🌐</span>
+                    <span>Services</span>
+                </a>
+                <a href="#projects" class="nav-item" data-section="projects">
+                    <span class="icon">💼</span>
+                    <span>Projets</span>
+                </a>
+                <a href="#stats" class="nav-item" data-section="stats">
+                    <span class="icon">📈</span>
+                    <span>Statistiques</span>
+                </a>
+                <a href="#settings" class="nav-item" data-section="settings">
+                    <span class="icon">⚙️</span>
+                    <span>Paramètres</span>
+                </a>
+                <a href="#database" class="nav-item" data-section="database">
+                    <span class="icon">💾</span>
+                    <span>Base de données</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="btn-back">← Retour au site</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <p>Vue d'ensemble de votre contenu</p>
+                </div>
+
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">🌐</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalServices">0</div>
+                            <div class="stat-label">Services</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💼</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalProjects">0</div>
+                            <div class="stat-label">Projets</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalStats">0</div>
+                            <div class="stat-label">Statistiques</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💾</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="dbSize">0 KB</div>
+                            <div class="stat-label">Taille BDD</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Actions rapides</h3>
+                    <button class="btn btn-primary" onclick="showSection('services')">➕ Nouveau service</button>
+                    <button class="btn btn-primary" onclick="showSection('projects')">➕ Nouveau projet</button>
+                    <button class="btn btn-success" onclick="exportDatabase()">💾 Exporter la base</button>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section id="services" class="content-section">
+                <div class="section-header">
+                    <h2>Gestion des Services</h2>
+                    <button class="btn btn-primary" onclick="openServiceModal()">➕ Nouveau service</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Icône</th>
+                                <th>Titre</th>
+                                <th>Slug</th>
+                                <th>Actif</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesTable">
+                            <tr><td colspan="5" class="loading">Chargement...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="content-section">
+                <div class="section-header">
+                    <h2>Gestion des Projets</h2>
+                    <button class="btn btn-primary" onclick="openProjectModal()">➕ Nouveau projet</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Icône</th>
+                                <th>Titre</th>
+                                <th>Slug</th>
+                                <th>Vedette</th>
+                                <th>Actif</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectsTable">
+                            <tr><td colspan="6" class="loading">Chargement...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section id="stats" class="content-section">
+                <div class="section-header">
+                    <h2>Gestion des Statistiques</h2>
+                    <button class="btn btn-primary" onclick="openStatModal()">➕ Nouvelle stat</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Icône</th>
+                                <th>Valeur</th>
+                                <th>Label</th>
+                                <th>Actif</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsTable">
+                            <tr><td colspan="5" class="loading">Chargement...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h2>Paramètres du site</h2>
+                </div>
+
+                <div class="settings-form">
+                    <div class="form-card">
+                        <h3>Informations générales</h3>
+                        <div class="form-group">
+                            <label>Titre du site</label>
+                            <input type="text" id="setting_site_title" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Baseline</label>
+                            <input type="text" id="setting_site_tagline" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Contact</h3>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="setting_contact_email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Téléphone</label>
+                            <input type="tel" id="setting_contact_phone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Localisation</label>
+                            <input type="text" id="setting_contact_location" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Réseaux sociaux</h3>
+                        <div class="form-group">
+                            <label>LinkedIn</label>
+                            <input type="url" id="setting_social_linkedin" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>GitHub</label>
+                            <input type="url" id="setting_social_github" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Twitter / X</label>
+                            <input type="url" id="setting_social_twitter" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Instagram</label>
+                            <input type="url" id="setting_social_instagram" class="form-control">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success btn-lg" onclick="saveSettings()">💾 Enregistrer les paramètres</button>
+                </div>
+            </section>
+
+            <!-- Database Section -->
+            <section id="database" class="content-section">
+                <div class="section-header">
+                    <h2>Gestion de la base de données</h2>
+                </div>
+
+                <div class="db-actions">
+                    <div class="form-card">
+                        <h3>💾 Export de la base de données</h3>
+                        <p>Téléchargez votre base de données SQLite pour backup ou migration.</p>
+                        <button class="btn btn-success" onclick="exportDatabase()">📥 Télécharger la BDD (.sqlite)</button>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>📤 Import de la base de données</h3>
+                        <p>Importez un fichier SQLite pour restaurer vos données.</p>
+                        <input type="file" id="dbFileInput" accept=".sqlite,.db" style="display: none;">
+                        <button class="btn btn-primary" onclick="document.getElementById('dbFileInput').click()">📤 Importer une BDD</button>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>🔄 Réinitialisation</h3>
+                        <p>⚠️ Attention : Cette action supprimera toutes vos données et recréera la base avec les données d'exemple.</p>
+                        <button class="btn btn-danger" onclick="resetDatabase()">🗑️ Réinitialiser la BDD</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Service Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="serviceModalTitle">Nouveau Service</h3>
+                <span class="close" onclick="closeServiceModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="serviceForm" onsubmit="saveService(event)">
+                    <input type="hidden" id="service_id">
+
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" id="service_title" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Slug (URL) *</label>
+                        <input type="text" id="service_slug" class="form-control" required>
+                        <small>Ex: developpement-web (sans espaces, minuscules)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Icône</label>
+                        <input type="text" id="service_icon" class="form-control" placeholder="🌐">
+                        <small>Emoji ou code HTML</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description courte *</label>
+                        <textarea id="service_short_description" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description complète *</label>
+                        <textarea id="service_full_description" class="form-control" rows="6" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fonctionnalités (une par ligne)</label>
+                        <textarea id="service_features" class="form-control" rows="8"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ordre d'affichage</label>
+                            <input type="number" id="service_order_index" class="form-control" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="service_is_active" checked>
+                                Service actif
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeServiceModal()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="projectModalTitle">Nouveau Projet</h3>
+                <span class="close" onclick="closeProjectModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm" onsubmit="saveProject(event)">
+                    <input type="hidden" id="project_id">
+
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" id="project_title" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Slug (URL) *</label>
+                        <input type="text" id="project_slug" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Icône</label>
+                        <input type="text" id="project_icon" class="form-control" placeholder="🚀">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image (URL)</label>
+                        <input type="url" id="project_image" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description courte *</label>
+                        <textarea id="project_short_description" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description complète</label>
+                        <textarea id="project_full_description" class="form-control" rows="6"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tags (séparés par des virgules)</label>
+                        <input type="text" id="project_tags" class="form-control" placeholder="React, Node.js, MongoDB">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Technologies (séparées par des virgules)</label>
+                        <input type="text" id="project_technologies" class="form-control">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>URL du projet</label>
+                            <input type="url" id="project_project_url" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>URL GitHub</label>
+                            <input type="url" id="project_github_url" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ordre d'affichage</label>
+                            <input type="number" id="project_order_index" class="form-control" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="project_is_featured">
+                                Projet vedette
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="project_is_active" checked>
+                                Projet actif
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stat Modal -->
+    <div id="statModal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="statModalTitle">Nouvelle Statistique</h3>
+                <span class="close" onclick="closeStatModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="statForm" onsubmit="saveStat(event)">
+                    <input type="hidden" id="stat_id">
+
+                    <div class="form-group">
+                        <label>Icône</label>
+                        <input type="text" id="stat_icon" class="form-control" placeholder="☕">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Valeur *</label>
+                        <input type="number" id="stat_value" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Label *</label>
+                        <input type="text" id="stat_label" class="form-control" required placeholder="Expressos / jour">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Unité</label>
+                        <input type="text" id="stat_unit" class="form-control" placeholder="%, +, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ordre d'affichage</label>
+                        <input type="number" id="stat_order_index" class="form-control" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="stat_is_active" checked>
+                            Statistique active
+                        </label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeStatModal()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="../js/database.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
