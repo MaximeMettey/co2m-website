@@ -47,7 +47,7 @@ const upload = multer({
     }
 });
 
-// Upload endpoint (protected - admin only)
+// Upload project main image (protected - admin only)
 router.post('/project-image', authMiddleware, upload.single('image'), (req, res) => {
     try {
         if (!req.file) {
@@ -63,7 +63,30 @@ router.post('/project-image', authMiddleware, upload.single('image'), (req, res)
             filename: req.file.filename
         });
 
-        console.log(`✅ Image uploaded: ${imageUrl}`);
+        console.log(`✅ Project image uploaded: ${imageUrl}`);
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ error: 'Erreur lors de l\'upload' });
+    }
+});
+
+// Upload content image for project descriptions (protected - admin only)
+router.post('/content-image', authMiddleware, upload.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Aucun fichier uploadé' });
+        }
+
+        // Return the public URL path
+        const imageUrl = `/uploads/projects/${req.file.filename}`;
+
+        res.json({
+            success: true,
+            url: imageUrl,
+            filename: req.file.filename
+        });
+
+        console.log(`✅ Content image uploaded: ${imageUrl}`);
     } catch (error) {
         console.error('Upload error:', error);
         res.status(500).json({ error: 'Erreur lors de l\'upload' });

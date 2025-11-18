@@ -82,11 +82,20 @@ function logout() {
 
 // Initialize Quill WYSIWYG editors
 function initQuillEditors() {
-    // Quill toolbar configuration
-    const toolbarOptions = [
+    // Quill toolbar configuration (no image for services)
+    const serviceToolbarOptions = [
         [{ 'header': [2, 3, false] }],
         ['bold', 'italic', 'underline'],
         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['clean']
+    ];
+
+    // Quill toolbar configuration for projects (with image support)
+    const projectToolbarOptions = [
+        [{ 'header': [2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['image'],
         ['clean']
     ];
 
@@ -95,24 +104,100 @@ function initQuillEditors() {
         serviceDescriptionEditor = new Quill('#service_full_description', {
             theme: 'snow',
             modules: {
-                toolbar: toolbarOptions
+                toolbar: serviceToolbarOptions
             },
             placeholder: 'Décrivez votre service en détail...'
         });
     }
 
-    // Project description editor
+    // Project description editor (with image upload handler)
     if (document.getElementById('project_full_description')) {
         projectDescriptionEditor = new Quill('#project_full_description', {
             theme: 'snow',
             modules: {
-                toolbar: toolbarOptions
+                toolbar: {
+                    container: projectToolbarOptions,
+                    handlers: {
+                        image: imageHandler
+                    }
+                }
             },
             placeholder: 'Décrivez votre projet en détail...'
         });
     }
 
     console.log('✅ Quill editors initialized');
+}
+
+// Custom image handler for Quill - uploads image to server
+function imageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Type de fichier non supporté. Utilisez JPG, PNG, GIF ou WebP.');
+            return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Le fichier est trop volumineux. Taille maximale : 5MB');
+            return;
+        }
+
+        // Show loading indicator in editor
+        const range = projectDescriptionEditor.getSelection(true);
+        projectDescriptionEditor.insertText(range.index, 'Uploading image...');
+
+        try {
+            // Upload to server
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const token = localStorage.getItem('admin_token');
+            const response = await fetch('/api/upload/content-image', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Erreur lors de l\'upload');
+            }
+
+            const result = await response.json();
+
+            // Remove loading text
+            projectDescriptionEditor.deleteText(range.index, 'Uploading image...'.length);
+
+            // Insert image at cursor position
+            projectDescriptionEditor.insertEmbed(range.index, 'image', result.url);
+            projectDescriptionEditor.setSelection(range.index + 1);
+
+            console.log('✅ Image inserted in content:', result.url);
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Erreur lors de l\'upload : ' + error.message);
+
+            // Remove loading text on error
+            const range = projectDescriptionEditor.getSelection();
+            if (range) {
+                projectDescriptionEditor.deleteText(range.index - 'Uploading image...'.length, 'Uploading image...'.length);
+            }
+        }
+    };
 }
 
 // Navigation
