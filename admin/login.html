@@ -150,6 +150,20 @@
             75% { transform: translateX(10px); }
         }
 
+        .info-box {
+            background: rgba(63, 169, 245, 0.1);
+            border: 1px solid rgba(63, 169, 245, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .info-box strong {
+            color: var(--primary-color);
+        }
+
         .back-link {
             display: block;
             text-align: center;
@@ -209,6 +223,13 @@
                     Connexion en cours...
                 </div>
             </form>
+
+            <div class="info-box">
+                <strong>Identifiants par défaut :</strong><br>
+                Username: <code>admin</code><br>
+                Password: <code>Admin@CO2M2024</code><br>
+                <small>Changez le mot de passe via Paramètres > Sécurité après la première connexion</small>
+            </div>
 
             <a href="../index.html" class="back-link">← Retour au site</a>
         </div>
