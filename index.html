@@ -339,6 +339,12 @@
                             <label for="message">Message *</label>
                             <textarea id="message" name="message" required></textarea>
                         </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="gdpr_consent" name="gdpr_consent" required>
+                                <span>J'accepte que mes données personnelles soient collectées et traitées pour répondre à ma demande, conformément à la <a href="/politique-confidentialite.html" target="_blank" style="color: var(--primary-color); text-decoration: underline;">politique de confidentialité</a>. *</span>
+                            </label>
+                        </div>
                         <button type="submit" class="btn">Envoyer le message</button>
                     </form>
                 </div>
@@ -358,8 +364,9 @@
                 <a href="#portfolio">Portfolio</a>
                 <a href="#contact">Contact</a>
             </div>
-            <p>&copy; 2024 CO2M - Maxime METTEY. Tous droits réservés.</p>
+            <p>&copy; <span id="copyrightYear"></span> CO2M - Maxime METTEY. Tous droits réservés.</p>
             <p style="margin-top: 0.5rem; font-size: 0.85rem;">Développement web & mobile - Belfort, Franche-Comté</p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;"><a href="/politique-confidentialite.html" style="color: var(--text-secondary); text-decoration: underline;">Politique de confidentialité</a></p>
         </div>
     </footer>
 

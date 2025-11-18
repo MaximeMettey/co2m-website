@@ -106,3 +106,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// ============================================
+// Dynamic Copyright Year
+// ============================================
+const copyrightYear = document.getElementById('copyrightYear');
+if (copyrightYear) {
+    copyrightYear.textContent = new Date().getFullYear();
+}
