@@ -507,3 +507,110 @@ textarea.form-control {
         max-width: 100%;
     }
 }
+
+/* ============================================
+   QUILL WYSIWYG EDITOR - DARK THEME
+   ============================================ */
+
+/* Toolbar background */
+.ql-toolbar.ql-snow {
+    background: var(--bg-darker) !important;
+    border: 1px solid rgba(63, 169, 245, 0.2) !important;
+    border-bottom: none !important;
+    border-radius: 5px 5px 0 0 !important;
+}
+
+/* Editor background and text */
+.ql-container.ql-snow {
+    background: var(--bg-darker) !important;
+    border: 1px solid rgba(63, 169, 245, 0.2) !important;
+    border-radius: 0 0 5px 5px !important;
+}
+
+.ql-editor {
+    color: var(--text-primary) !important;
+    min-height: 200px;
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--text-muted) !important;
+    font-style: italic;
+}
+
+/* Toolbar buttons */
+.ql-snow .ql-stroke {
+    stroke: var(--text-secondary) !important;
+}
+
+.ql-snow .ql-fill {
+    fill: var(--text-secondary) !important;
+}
+
+.ql-snow .ql-picker-label {
+    color: var(--text-secondary) !important;
+}
+
+/* Active/hover states */
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover {
+    color: var(--primary-color) !important;
+}
+
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button:hover .ql-stroke {
+    stroke: var(--primary-color) !important;
+}
+
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow .ql-toolbar button:hover .ql-fill {
+    fill: var(--primary-color) !important;
+}
+
+.ql-snow.ql-toolbar button.ql-active,
+.ql-snow .ql-toolbar button.ql-active {
+    color: var(--primary-color) !important;
+}
+
+.ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ql-snow .ql-toolbar button.ql-active .ql-stroke {
+    stroke: var(--primary-color) !important;
+}
+
+.ql-snow.ql-toolbar button.ql-active .ql-fill,
+.ql-snow .ql-toolbar button.ql-active .ql-fill {
+    fill: var(--primary-color) !important;
+}
+
+/* Dropdown menus */
+.ql-snow .ql-picker-options {
+    background: var(--bg-card) !important;
+    border: 1px solid rgba(63, 169, 245, 0.2) !important;
+}
+
+.ql-snow .ql-picker-item {
+    color: var(--text-primary) !important;
+}
+
+.ql-snow .ql-picker-item:hover {
+    background: rgba(63, 169, 245, 0.1) !important;
+    color: var(--primary-color) !important;
+}
+
+/* Headers in editor content */
+.ql-editor h2 {
+    color: var(--text-primary) !important;
+}
+
+.ql-editor h3 {
+    color: var(--text-primary) !important;
+}
+
+/* Lists */
+.ql-editor ul,
+.ql-editor ol {
+    color: var(--text-primary) !important;
+}
+
+.ql-editor li {
+    color: var(--text-primary) !important;
+}
