@@ -395,6 +395,15 @@ section:nth-child(even) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Limite à 3 colonnes maximum en mode desktop */
+@media (min-width: 1200px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .service-card {
@@ -433,7 +442,8 @@ section:nth-child(even) {
 .service-icon {
     font-size: 3rem;
     margin-bottom: 1.5rem;
-    display: inline-block;
+    display: block;
+    text-align: center;
 }
 
 .service-card h3 {
