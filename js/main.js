@@ -72,6 +72,9 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+// Export observer to window for use in index.js (dynamic content)
+window.observer = observer;
+
 document.querySelectorAll('.fade-in').forEach(el => {
     observer.observe(el);
 });
