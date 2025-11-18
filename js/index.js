@@ -63,11 +63,11 @@ async function loadServices() {
 }
 
 // ============================================
-// Load Projects from API
+// Load Projects from API (featured only for homepage)
 // ============================================
 async function loadProjects() {
     try {
-        const projects = await API.getProjects();
+        const projects = await API.getFeaturedProjects();
         const portfolioGrid = document.getElementById('portfolioGrid');
 
         if (!portfolioGrid) return;

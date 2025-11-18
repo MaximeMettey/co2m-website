@@ -59,6 +59,11 @@ app.get('/projects/:slug', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'project.html'));
 });
 
+// Projects listing page
+app.get('/projets', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'projets.html'));
+});
+
 // Catch-all route for SPA (serves index.html for all non-API routes)
 app.get('*', (req, res) => {
     if (!req.path.startsWith('/api')) {
