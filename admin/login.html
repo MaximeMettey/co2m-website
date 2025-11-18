@@ -212,7 +212,7 @@
                 </div>
 
                 <div class="captcha-container">
-                    <div class="h-captcha" data-sitekey="10000000-ffff-ffff-ffff-000000000001"></div>
+                    <div id="hcaptcha-widget"></div>
                 </div>
 
                 <button type="submit" class="btn" id="submitBtn">
@@ -241,6 +241,47 @@
         const errorMessage = document.getElementById('errorMessage');
         const submitBtn = document.getElementById('submitBtn');
         const loadingMessage = document.getElementById('loadingMessage');
+        let hcaptchaWidgetId = null;
+
+        // Load hCaptcha configuration and initialize widget
+        async function initHCaptcha() {
+            try {
+                // Fetch public config from API
+                const response = await fetch('/api/config/public');
+                const config = await response.json();
+                const sitekey = config.hcaptcha?.sitekey || '10000000-ffff-ffff-ffff-000000000001';
+
+                // Wait for hCaptcha to be ready
+                const checkHCaptcha = setInterval(() => {
+                    if (typeof hcaptcha !== 'undefined') {
+                        clearInterval(checkHCaptcha);
+
+                        // Render hCaptcha widget
+                        hcaptchaWidgetId = hcaptcha.render('hcaptcha-widget', {
+                            sitekey: sitekey
+                        });
+
+                        console.log('✅ hCaptcha initialized with sitekey:', sitekey);
+                    }
+                }, 100);
+
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkHCaptcha);
+                    if (hcaptchaWidgetId === null) {
+                        console.warn('⚠️ hCaptcha failed to load');
+                    }
+                }, 5000);
+            } catch (error) {
+                console.error('Error loading hCaptcha config:', error);
+                // Fallback: try to render with default key
+                if (typeof hcaptcha !== 'undefined') {
+                    hcaptchaWidgetId = hcaptcha.render('hcaptcha-widget', {
+                        sitekey: '10000000-ffff-ffff-ffff-000000000001'
+                    });
+                }
+            }
+        }
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -251,7 +292,7 @@
             // Get form data
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const hcaptchaToken = hcaptcha.getResponse();
+            const hcaptchaToken = hcaptchaWidgetId !== null ? hcaptcha.getResponse(hcaptchaWidgetId) : '';
 
             // Validate hCaptcha
             if (!hcaptchaToken) {
@@ -274,7 +315,9 @@
                 showError(error.message || 'Erreur de connexion. Vérifiez vos identifiants.');
 
                 // Reset hCaptcha
-                hcaptcha.reset();
+                if (hcaptchaWidgetId !== null) {
+                    hcaptcha.reset(hcaptchaWidgetId);
+                }
 
                 // Re-enable form
                 submitBtn.disabled = false;
@@ -287,7 +330,7 @@
             errorMessage.classList.add('show');
         }
 
-        // Check if already logged in
+        // Check if already logged in and initialize hCaptcha
         window.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('admin_token');
             if (token) {
@@ -296,11 +339,15 @@
                     if (result.valid) {
                         // Already logged in, redirect
                         window.location.href = '/admin/index.html';
+                        return;
                     }
                 } catch (error) {
                     // Token invalid, stay on login page
                 }
             }
+
+            // Initialize hCaptcha
+            initHCaptcha();
         });
     </script>
 </body>

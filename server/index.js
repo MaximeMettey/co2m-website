@@ -10,6 +10,7 @@ const projectsRoutes = require('./routes/projects');
 const statsRoutes = require('./routes/stats');
 const contentRoutes = require('./routes/content');
 const settingsRoutes = require('./routes/settings');
+const configRoutes = require('./routes/config');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ app.use('/api/projects', projectsRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/config', configRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
