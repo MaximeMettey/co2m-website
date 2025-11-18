@@ -121,6 +121,10 @@ class APIClient {
         return await this.request('/projects/featured');
     }
 
+    async getProjectBySlug(slug) {
+        return await this.request(`/projects/${slug}`);
+    }
+
     async createProject(data) {
         return await this.request('/projects', {
             method: 'POST',

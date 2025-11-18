@@ -49,6 +49,24 @@ router.get('/all', authMiddleware, (req, res) => {
     }
 });
 
+// GET single project by slug (public)
+router.get('/:slug', (req, res) => {
+    try {
+        const db = new Database(dbPath, { readonly: true });
+        const project = db.prepare('SELECT * FROM projects WHERE slug = ? AND is_active = 1').get(req.params.slug);
+        db.close();
+
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        res.json(project);
+    } catch (error) {
+        console.error('Error fetching project:', error);
+        res.status(500).json({ error: 'Failed to fetch project' });
+    }
+});
+
 // CREATE, UPDATE, DELETE routes (admin only) - similar to services
 router.post('/', authMiddleware, adminLimiter, (req, res) => {
     try {

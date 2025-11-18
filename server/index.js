@@ -50,6 +50,15 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Clean URL routes for services and projects (serve HTML templates)
+app.get('/services/:slug', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'service.html'));
+});
+
+app.get('/projects/:slug', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'project.html'));
+});
+
 // Catch-all route for SPA (serves index.html for all non-API routes)
 app.get('*', (req, res) => {
     if (!req.path.startsWith('/api')) {

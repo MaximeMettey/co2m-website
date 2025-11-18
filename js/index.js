@@ -40,6 +40,7 @@ async function loadServices() {
                     <h3>${service.title}</h3>
                     <p>${service.short_description || ''}</p>
                     ${featuresHTML}
+                    <a href="/services/${service.slug}" class="card-link-btn">En savoir plus →</a>
                 </div>
             `;
         }).join('');
@@ -93,6 +94,7 @@ async function loadProjects() {
                         <div class="portfolio-tags">
                             ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                         </div>
+                        <a href="/projects/${project.slug}" class="card-link-btn">En savoir plus →</a>
                     </div>
                 </div>
             `;
