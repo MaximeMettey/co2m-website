@@ -376,6 +376,9 @@ function openProjectModal(id = null) {
                 document.getElementById('project_image').value = project.image || '';
                 document.getElementById('project_short_description').value = project.short_description || '';
 
+                // Show image preview if exists
+                showProjectImagePreview(project.image);
+
                 // Set Quill editor content
                 if (projectDescriptionEditor) {
                     const delta = projectDescriptionEditor.clipboard.convert(project.full_description || '');
@@ -694,4 +697,103 @@ function setupDatabaseImport() {
 
 function resetDatabase() {
     alert('La réinitialisation de la base de données doit être effectuée côté serveur.\nVeuillez exécuter: npm run init-db');
+}
+
+// ============================================
+// IMAGE UPLOAD FOR PROJECTS
+// ============================================
+
+// Handle file selection and upload
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('project_image_file');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleProjectImageUpload);
+    }
+});
+
+async function handleProjectImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+        alert('Type de fichier non supporté. Utilisez JPG, PNG, GIF ou WebP.');
+        event.target.value = '';
+        return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Le fichier est trop volumineux. Taille maximale : 5MB');
+        event.target.value = '';
+        return;
+    }
+
+    // Show loading state
+    const preview = document.getElementById('project_image_preview');
+    const previewImg = document.getElementById('project_image_preview_img');
+    previewImg.src = '';
+    preview.style.display = 'block';
+    previewImg.alt = 'Upload en cours...';
+
+    try {
+        // Create FormData
+        const formData = new FormData();
+        formData.append('image', file);
+
+        // Upload to server
+        const token = localStorage.getItem('admin_token');
+        const response = await fetch('/api/upload/project-image', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Erreur lors de l\'upload');
+        }
+
+        const result = await response.json();
+
+        // Update hidden input with image URL
+        document.getElementById('project_image').value = result.url;
+
+        // Show preview
+        previewImg.src = result.url;
+        previewImg.alt = 'Preview';
+
+        console.log('✅ Image uploaded:', result.url);
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        alert('Erreur lors de l\'upload : ' + error.message);
+        event.target.value = '';
+        preview.style.display = 'none';
+    }
+}
+
+function removeProjectImage() {
+    if (!confirm('Supprimer cette image ?')) return;
+
+    // Clear inputs and hide preview
+    document.getElementById('project_image_file').value = '';
+    document.getElementById('project_image').value = '';
+    document.getElementById('project_image_preview').style.display = 'none';
+    document.getElementById('project_image_preview_img').src = '';
+}
+
+// Show existing image when editing
+function showProjectImagePreview(imageUrl) {
+    if (imageUrl) {
+        const preview = document.getElementById('project_image_preview');
+        const previewImg = document.getElementById('project_image_preview_img');
+        previewImg.src = imageUrl;
+        preview.style.display = 'block';
+    } else {
+        document.getElementById('project_image_preview').style.display = 'none';
+    }
 }

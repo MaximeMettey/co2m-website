@@ -364,8 +364,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Image (URL)</label>
-                        <input type="url" id="project_image" class="form-control">
+                        <label>Image du projet</label>
+                        <input type="file" id="project_image_file" class="form-control" accept="image/*" style="margin-bottom: 1rem;">
+                        <input type="hidden" id="project_image" class="form-control">
+                        <div id="project_image_preview" style="display: none; margin-top: 1rem;">
+                            <img id="project_image_preview_img" src="" alt="Preview" style="max-width: 300px; max-height: 200px; border-radius: 8px; border: 1px solid rgba(63, 169, 245, 0.2);">
+                            <button type="button" class="btn btn-danger" onclick="removeProjectImage()" style="display: block; margin-top: 0.5rem;">Supprimer l'image</button>
+                        </div>
+                        <small style="color: var(--text-muted);">JPG, PNG, GIF ou WebP - Max 5MB</small>
                     </div>
 
                     <div class="form-group">

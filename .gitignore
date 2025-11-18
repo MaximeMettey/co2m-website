@@ -51,3 +51,7 @@ ecosystem.config.js
 *.pem
 *.key
 *.crt
+
+# Uploaded images
+uploads/projects/*
+!uploads/projects/.gitkeep
