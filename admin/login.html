@@ -150,20 +150,6 @@
             75% { transform: translateX(10px); }
         }
 
-        .info-box {
-            background: rgba(63, 169, 245, 0.1);
-            border: 1px solid rgba(63, 169, 245, 0.2);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .info-box strong {
-            color: var(--primary-color);
-        }
-
         .back-link {
             display: block;
             text-align: center;
@@ -224,13 +210,6 @@
                 </div>
             </form>
 
-            <div class="info-box">
-                <strong>Credentials par défaut :</strong><br>
-                Username: <code>admin</code><br>
-                Password: <code>Admin@CO2M2024</code><br>
-                <small>⚠️ Changez ce mot de passe après la première connexion !</small>
-            </div>
-
             <a href="../index.html" class="back-link">← Retour au site</a>
         </div>
     </div>
@@ -242,6 +221,7 @@
         const submitBtn = document.getElementById('submitBtn');
         const loadingMessage = document.getElementById('loadingMessage');
         let hcaptchaWidgetId = null;
+        let isDevelopment = false;
 
         // Load hCaptcha configuration and initialize widget
         async function initHCaptcha() {
@@ -250,6 +230,17 @@
                 const response = await fetch('/api/config/public');
                 const config = await response.json();
                 const sitekey = config.hcaptcha?.sitekey || '10000000-ffff-ffff-ffff-000000000001';
+                isDevelopment = config.environment === 'development';
+
+                // In development mode, hide captcha container
+                if (isDevelopment) {
+                    const captchaContainer = document.querySelector('.captcha-container');
+                    if (captchaContainer) {
+                        captchaContainer.style.display = 'none';
+                    }
+                    console.log('⚠️ Development mode: hCaptcha disabled');
+                    return;
+                }
 
                 // Wait for hCaptcha to be ready
                 const checkHCaptcha = setInterval(() => {
@@ -292,12 +283,19 @@
             // Get form data
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const hcaptchaToken = hcaptchaWidgetId !== null ? hcaptcha.getResponse(hcaptchaWidgetId) : '';
 
-            // Validate hCaptcha
-            if (!hcaptchaToken) {
-                showError('Veuillez compléter le captcha');
-                return;
+            // In development mode, use a dummy token
+            let hcaptchaToken = 'dev-bypass-token';
+
+            // In production, get real token
+            if (!isDevelopment) {
+                hcaptchaToken = hcaptchaWidgetId !== null ? hcaptcha.getResponse(hcaptchaWidgetId) : '';
+
+                // Validate hCaptcha
+                if (!hcaptchaToken) {
+                    showError('Veuillez compléter le captcha');
+                    return;
+                }
             }
 
             // Show loading
@@ -314,8 +312,8 @@
                 console.error('Login error:', error);
                 showError(error.message || 'Erreur de connexion. Vérifiez vos identifiants.');
 
-                // Reset hCaptcha
-                if (hcaptchaWidgetId !== null) {
+                // Reset hCaptcha (only in production)
+                if (!isDevelopment && hcaptchaWidgetId !== null) {
                     hcaptcha.reset(hcaptchaWidgetId);
                 }
 
