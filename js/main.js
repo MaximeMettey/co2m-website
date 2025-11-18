@@ -82,44 +82,7 @@ document.querySelectorAll('.fade-in').forEach(el => {
 // ============================================
 // Counter Animation for Stats
 // ============================================
-const counters = document.querySelectorAll('.stat-number');
-let countersActivated = false;
-
-const animateCounters = () => {
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-target'));
-        const duration = 2000; // 2 seconds
-        const increment = target / (duration / 16); // 60fps
-        let current = 0;
-
-        const updateCounter = () => {
-            current += increment;
-            if (current < target) {
-                counter.textContent = Math.floor(current).toLocaleString('fr-FR');
-                requestAnimationFrame(updateCounter);
-            } else {
-                counter.textContent = target.toLocaleString('fr-FR');
-            }
-        };
-
-        updateCounter();
-    });
-};
-
-// Trigger counter animation when stats section is visible
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && !countersActivated) {
-            countersActivated = true;
-            animateCounters();
-        }
-    });
-}, { threshold: 0.5 });
-
-const statsSection = document.querySelector('.stats');
-if (statsSection) {
-    statsObserver.observe(statsSection);
-}
+// Note: Counter animation is handled in index.js for dynamically loaded stats
 
 // ============================================
 // Smooth Scrolling for Anchor Links

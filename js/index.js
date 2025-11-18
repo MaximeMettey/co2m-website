@@ -138,6 +138,13 @@ async function loadStats() {
             </div>
         `).join('');
 
+        // Observe stat items for fade-in animation
+        document.querySelectorAll('.stat-item').forEach(item => {
+            if (window.observer) {
+                window.observer.observe(item);
+            }
+        });
+
         // Re-observe stats for counter animation
         const counters = document.querySelectorAll('.stat-number');
         let countersActivated = false;
