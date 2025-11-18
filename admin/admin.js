@@ -925,7 +925,7 @@ async function handleGalleryUpload(event) {
     }
 
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = localStorage.getItem('admin_token');
         if (!token) {
             alert('Non authentifié');
             return;
