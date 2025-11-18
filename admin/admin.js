@@ -3,9 +3,16 @@ let currentEditingServiceId = null;
 let currentEditingProjectId = null;
 let currentEditingStatId = null;
 
+// Quill editors instances
+let serviceDescriptionEditor = null;
+let projectDescriptionEditor = null;
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Initializing admin panel...');
+
+    // Initialize Quill editors
+    initQuillEditors();
 
     // Check authentication
     const token = localStorage.getItem('admin_token');
@@ -71,6 +78,41 @@ function logout() {
         API.logout();
         window.location.href = '/admin/login.html';
     }
+}
+
+// Initialize Quill WYSIWYG editors
+function initQuillEditors() {
+    // Quill toolbar configuration
+    const toolbarOptions = [
+        [{ 'header': [2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['clean']
+    ];
+
+    // Service description editor
+    if (document.getElementById('service_full_description')) {
+        serviceDescriptionEditor = new Quill('#service_full_description', {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOptions
+            },
+            placeholder: 'Décrivez votre service en détail...'
+        });
+    }
+
+    // Project description editor
+    if (document.getElementById('project_full_description')) {
+        projectDescriptionEditor = new Quill('#project_full_description', {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOptions
+            },
+            placeholder: 'Décrivez votre projet en détail...'
+        });
+    }
+
+    console.log('✅ Quill editors initialized');
 }
 
 // Navigation
@@ -197,7 +239,12 @@ function openServiceModal(id = null) {
                 document.getElementById('service_slug').value = service.slug;
                 document.getElementById('service_icon').value = service.icon || '';
                 document.getElementById('service_short_description').value = service.short_description || '';
-                document.getElementById('service_full_description').value = service.full_description || '';
+
+                // Set Quill editor content
+                if (serviceDescriptionEditor) {
+                    const delta = serviceDescriptionEditor.clipboard.convert(service.full_description || '');
+                    serviceDescriptionEditor.setContents(delta);
+                }
 
                 const features = service.features ? JSON.parse(service.features) : [];
                 document.getElementById('service_features').value = features.join('\n');
@@ -231,7 +278,7 @@ async function saveService(event) {
         slug: document.getElementById('service_slug').value,
         icon: document.getElementById('service_icon').value,
         short_description: document.getElementById('service_short_description').value,
-        full_description: document.getElementById('service_full_description').value,
+        full_description: serviceDescriptionEditor ? serviceDescriptionEditor.root.innerHTML : '',
         features: JSON.stringify(
             document.getElementById('service_features').value
                 .split('\n')
@@ -328,7 +375,12 @@ function openProjectModal(id = null) {
                 document.getElementById('project_icon').value = project.icon || '';
                 document.getElementById('project_image').value = project.image || '';
                 document.getElementById('project_short_description').value = project.short_description || '';
-                document.getElementById('project_full_description').value = project.full_description || '';
+
+                // Set Quill editor content
+                if (projectDescriptionEditor) {
+                    const delta = projectDescriptionEditor.clipboard.convert(project.full_description || '');
+                    projectDescriptionEditor.setContents(delta);
+                }
 
                 const tags = project.tags ? JSON.parse(project.tags) : [];
                 document.getElementById('project_tags').value = tags.join(', ');
@@ -369,7 +421,7 @@ async function saveProject(event) {
         icon: document.getElementById('project_icon').value,
         image: document.getElementById('project_image').value,
         short_description: document.getElementById('project_short_description').value,
-        full_description: document.getElementById('project_full_description').value,
+        full_description: projectDescriptionEditor ? projectDescriptionEditor.root.innerHTML : '',
         tags: JSON.stringify(
             document.getElementById('project_tags').value
                 .split(',')

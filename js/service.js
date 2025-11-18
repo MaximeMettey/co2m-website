@@ -48,12 +48,10 @@ async function loadServiceDetail(slug) {
         document.getElementById('serviceTitle').textContent = service.title;
         document.getElementById('serviceShortDescription').textContent = service.short_description || '';
 
-        // Full description - handle line breaks
+        // Full description - insert HTML directly from WYSIWYG editor
         const fullDescDiv = document.getElementById('serviceFullDescription');
         if (service.full_description) {
-            // Convert line breaks to paragraphs
-            const paragraphs = service.full_description.split('\n').filter(p => p.trim());
-            fullDescDiv.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+            fullDescDiv.innerHTML = service.full_description;
         } else {
             fullDescDiv.innerHTML = '<p>Aucune description disponible.</p>';
         }

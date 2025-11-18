@@ -55,12 +55,10 @@ async function loadProjectDetail(slug) {
             imageContainer.innerHTML = `<span class="project-icon-large">${project.icon || '🚀'}</span>`;
         }
 
-        // Full description - handle line breaks
+        // Full description - insert HTML directly from WYSIWYG editor
         const fullDescDiv = document.getElementById('projectFullDescription');
         if (project.full_description) {
-            // Convert line breaks to paragraphs
-            const paragraphs = project.full_description.split('\n').filter(p => p.trim());
-            fullDescDiv.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+            fullDescDiv.innerHTML = project.full_description;
         } else {
             fullDescDiv.innerHTML = '<p>Aucune description disponible.</p>';
         }
