@@ -64,7 +64,13 @@ function extractAllTags(projects) {
 function buildTagFilters(tags) {
     const tagsFilter = document.getElementById('tagsFilter');
 
-    // Keep the "All" button, add individual tag buttons
+    // Add click handler to the existing "All" button
+    const allButton = tagsFilter.querySelector('[data-tag="all"]');
+    if (allButton) {
+        allButton.onclick = () => filterByTag('all');
+    }
+
+    // Add individual tag buttons
     tags.forEach(tag => {
         const button = document.createElement('button');
         button.className = 'tag-filter-btn';
