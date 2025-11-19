@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio de projets - CO2M, développeur full-stack à Belfort. Découvrez mes réalisations en développement web, mobile et applications sur-mesure.">
+    <meta name="keywords" content="portfolio, projets web, applications mobiles, développeur Belfort, réalisations">
+    <meta name="author" content="Maxime METTEY - CO2M">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png">
+
+    <title>Portfolio - Tous les projets | CO2M</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .projects-page {
+            min-height: 100vh;
+            padding: 120px 0 80px;
+            background: var(--bg-dark);
+        }
+
+        .projects-page .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .filters-section {
+            margin-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .filters-label {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .tags-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            max-width: 900px;
+        }
+
+        .tag-filter-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(63, 169, 245, 0.1);
+            border: 1px solid rgba(63, 169, 245, 0.3);
+            border-radius: 25px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .tag-filter-btn:hover {
+            background: rgba(63, 169, 245, 0.2);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .tag-filter-btn.active {
+            background: var(--accent-gradient);
+            border-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 20px rgba(63, 169, 245, 0.3);
+        }
+
+        .projects-count {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .no-projects {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .loading-container {
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(63, 169, 245, 0.2);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .page-header p {
+                font-size: 1rem;
+            }
+
+            .tags-filter {
+                gap: 0.7rem;
+            }
+
+            .tag-filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         HEADER
+         ============================================ -->
+    <header id="header">
+        <nav>
+            <div class="logo">
+                <img src="/logo.png" alt="CO2M Logo">
+                <span class="logo-text">CO2M</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/#apropos">À propos</a></li>
+                <li><a href="/#services">Services</a></li>
+                <li><a href="/projets">Portfolio</a></li>
+                <li><a href="/#contact">Contact</a></li>
+            </ul>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ============================================
+         PROJECTS PAGE
+         ============================================ -->
+    <section class="projects-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header fade-in">
+                <h1>Portfolio</h1>
+                <p>Découvrez l'ensemble de mes réalisations en développement web, mobile et applications sur-mesure</p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p style="color: var(--text-secondary);">Chargement des projets...</p>
+            </div>
+
+            <!-- Content (hidden until loaded) -->
+            <div id="projectsContent" style="display: none;">
+                <!-- Filters -->
+                <div class="filters-section fade-in">
+                    <span class="filters-label">Filtrer par technologie :</span>
+                    <div class="tags-filter" id="tagsFilter">
+                        <button class="tag-filter-btn active" data-tag="all">Tous les projets</button>
+                        <!-- Tags will be dynamically loaded -->
+                    </div>
+                </div>
+
+                <!-- Projects Count -->
+                <div class="projects-count" id="projectsCount">
+                    <!-- Will be filled dynamically -->
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="projects-grid" id="projectsGrid">
+                    <!-- Projects will be loaded here -->
+                </div>
+
+                <!-- No Projects Message -->
+                <div class="no-projects" id="noProjects" style="display: none;">
+                    <p>Aucun projet ne correspond à ce filtre.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         SCROLL TO TOP
+         ============================================ -->
+    <button id="scrollTop" class="scroll-top">↑</button>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/projets.js"></script>
+    <script src="/js/analytics.js"></script>
+</body>
+</html>

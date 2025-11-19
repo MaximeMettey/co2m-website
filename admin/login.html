@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CO2M Admin</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        :root {
+            --primary-color: #3FA9F5;
+            --primary-dark: #2B8DD6;
+            --bg-dark: #0A0E27;
+            --bg-darker: #050812;
+            --bg-card: #151B3D;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B4BCD0;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #3FA9F5 0%, #2B8DD6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-container p {
+            color: var(--text-secondary);
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(63, 169, 245, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-darker);
+            border: 2px solid rgba(63, 169, 245, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(63, 169, 245, 0.1);
+        }
+
+        .captcha-container {
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #3FA9F5 0%, #2B8DD6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(63, 169, 245, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .info-box {
+            background: rgba(63, 169, 245, 0.1);
+            border: 1px solid rgba(63, 169, 245, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .info-box strong {
+            color: var(--primary-color);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container">
+            <img src="../logo.png" alt="CO2M Logo">
+            <h1>CO2M Admin</h1>
+            <p>Connexion à l'espace d'administration</p>
+        </div>
+
+        <div class="login-card">
+            <div id="errorMessage" class="error-message"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+
+                <div class="captcha-container">
+                    <div id="hcaptcha-widget"></div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    Se connecter
+                </button>
+
+                <div id="loadingMessage" class="loading">
+                    Connexion en cours...
+                </div>
+            </form>
+
+            <div class="info-box">
+                <strong>Identifiants par défaut :</strong><br>
+                Username: <code>admin</code><br>
+                Password: <code>Admin@CO2M2024</code><br>
+                <small>Changez le mot de passe via Paramètres > Sécurité après la première connexion</small>
+            </div>
+
+            <a href="../index.html" class="back-link">← Retour au site</a>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingMessage = document.getElementById('loadingMessage');
+        let hcaptchaWidgetId = null;
+        let isDevelopment = false;
+
+        // Load hCaptcha configuration and initialize widget
+        async function initHCaptcha() {
+            try {
+                // Fetch public config from API
+                const response = await fetch('/api/config/public');
+                const config = await response.json();
+                const sitekey = config.hcaptcha?.sitekey || '10000000-ffff-ffff-ffff-000000000001';
+                isDevelopment = config.environment === 'development';
+
+                // In development mode, hide captcha container
+                if (isDevelopment) {
+                    const captchaContainer = document.querySelector('.captcha-container');
+                    if (captchaContainer) {
+                        captchaContainer.style.display = 'none';
+                    }
+                    console.log('⚠️ Development mode: hCaptcha disabled');
+                    return;
+                }
+
+                // Wait for hCaptcha to be ready
+                const checkHCaptcha = setInterval(() => {
+                    if (typeof hcaptcha !== 'undefined') {
+                        clearInterval(checkHCaptcha);
+
+                        // Render hCaptcha widget
+                        hcaptchaWidgetId = hcaptcha.render('hcaptcha-widget', {
+                            sitekey: sitekey
+                        });
+
+                        console.log('✅ hCaptcha initialized with sitekey:', sitekey);
+                    }
+                }, 100);
+
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkHCaptcha);
+                    if (hcaptchaWidgetId === null) {
+                        console.warn('⚠️ hCaptcha failed to load');
+                    }
+                }, 5000);
+            } catch (error) {
+                console.error('Error loading hCaptcha config:', error);
+                // Fallback: try to render with default key
+                if (typeof hcaptcha !== 'undefined') {
+                    hcaptchaWidgetId = hcaptcha.render('hcaptcha-widget', {
+                        sitekey: '10000000-ffff-ffff-ffff-000000000001'
+                    });
+                }
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Hide previous errors
+            errorMessage.classList.remove('show');
+
+            // Get form data
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // In development mode, use a dummy token
+            let hcaptchaToken = 'dev-bypass-token';
+
+            // In production, get real token
+            if (!isDevelopment) {
+                hcaptchaToken = hcaptchaWidgetId !== null ? hcaptcha.getResponse(hcaptchaWidgetId) : '';
+
+                // Validate hCaptcha
+                if (!hcaptchaToken) {
+                    showError('Veuillez compléter le captcha');
+                    return;
+                }
+            }
+
+            // Show loading
+            submitBtn.disabled = true;
+            loadingMessage.classList.add('show');
+
+            try {
+                // Call login API
+                await API.login(username, password, hcaptchaToken);
+
+                // Success - redirect to admin
+                window.location.href = '/admin/index.html';
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(error.message || 'Erreur de connexion. Vérifiez vos identifiants.');
+
+                // Reset hCaptcha (only in production)
+                if (!isDevelopment && hcaptchaWidgetId !== null) {
+                    hcaptcha.reset(hcaptchaWidgetId);
+                }
+
+                // Re-enable form
+                submitBtn.disabled = false;
+                loadingMessage.classList.remove('show');
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        // Check if already logged in and initialize hCaptcha
+        window.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('admin_token');
+            if (token) {
+                try {
+                    const result = await API.verifyToken();
+                    if (result.valid) {
+                        // Already logged in, redirect
+                        window.location.href = '/admin/index.html';
+                        return;
+                    }
+                } catch (error) {
+                    // Token invalid, stay on login page
+                }
+            }
+
+            // Initialize hCaptcha
+            initHCaptcha();
+        });
+    </script>
+</body>
+</html>

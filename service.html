@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="développeur web Belfort, développeur full-stack, création site internet, application mobile">
+    <meta name="author" content="Maxime METTEY - CO2M">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png">
+
+    <title>Service - CO2M</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .service-detail {
+            min-height: 100vh;
+            padding: 120px 0 80px;
+            background: var(--bg-dark);
+        }
+
+        .service-detail .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-color);
+        }
+
+        .service-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .service-icon-large {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .service-header h1 {
+            margin-bottom: 1rem;
+        }
+
+        .service-header .short-description {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .service-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .service-description {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(63, 169, 245, 0.1);
+        }
+
+        .service-description h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-description p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(63, 169, 245, 0.1);
+        }
+
+        .service-features h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: rgba(63, 169, 245, 0.05);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 5px;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        .features-list li:hover {
+            background: rgba(63, 169, 245, 0.1);
+            transform: translateX(5px);
+        }
+
+        .features-list li::before {
+            content: '✓';
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .service-cta {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(63, 169, 245, 0.1) 0%, rgba(43, 141, 214, 0.05) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(63, 169, 245, 0.2);
+        }
+
+        .service-cta h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .loading-container {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(63, 169, 245, 0.2);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            border-radius: 15px;
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .service-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .service-icon-large {
+                font-size: 3.5rem;
+            }
+
+            .service-header h1 {
+                font-size: 2rem;
+            }
+
+            .service-header .short-description {
+                font-size: 1.1rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         HEADER
+         ============================================ -->
+    <header id="header">
+        <nav>
+            <div class="logo">
+                <img src="/logo.png" alt="CO2M Logo">
+                <span class="logo-text">CO2M</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/#apropos">À propos</a></li>
+                <li><a href="/#services">Services</a></li>
+                <li><a href="/#portfolio">Portfolio</a></li>
+                <li><a href="/#contact">Contact</a></li>
+            </ul>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ============================================
+         SERVICE DETAIL
+         ============================================ -->
+    <section class="service-detail">
+        <div class="container">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p style="color: var(--text-secondary);">Chargement du service...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="error-message" style="display: none;">
+                <h2>Service non trouvé</h2>
+                <p>Le service que vous recherchez n'existe pas ou n'est plus disponible.</p>
+                <a href="/" class="btn" style="margin-top: 1rem;">Retour à l'accueil</a>
+            </div>
+
+            <!-- Content (hidden until loaded) -->
+            <div id="serviceContent" style="display: none;">
+                <div class="breadcrumb">
+                    <a href="/">Accueil</a>
+                    <span>/</span>
+                    <a href="/#services">Services</a>
+                    <span>/</span>
+                    <span id="breadcrumbTitle">...</span>
+                </div>
+
+                <div class="service-header fade-in">
+                    <span class="service-icon-large" id="serviceIcon">🌐</span>
+                    <h1 id="serviceTitle">Service</h1>
+                    <p class="short-description" id="serviceShortDescription"></p>
+                </div>
+
+                <div class="service-content">
+                    <div class="service-description fade-in">
+                        <h2>Description détaillée</h2>
+                        <div id="serviceFullDescription"></div>
+                    </div>
+
+                    <div class="service-features fade-in">
+                        <h2>Ce qui est inclus</h2>
+                        <ul class="features-list" id="serviceFeaturesList">
+                            <!-- Features will be loaded here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-cta fade-in">
+                    <h2>Intéressé par ce service ?</h2>
+                    <p>Discutons de votre projet et trouvons la meilleure solution ensemble.</p>
+                    <div class="btn-group">
+                        <a href="/#contact" class="btn">Demander un devis gratuit</a>
+                        <a href="/#services" class="btn btn-outline">Voir tous les services</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         SCROLL TO TOP
+         ============================================ -->
+    <button id="scrollTop" class="scroll-top">↑</button>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/service.js"></script>
+    <script src="/js/analytics.js"></script>
+</body>
+</html>
